@@ -33,9 +33,9 @@ class Scorecards extends Component {
     tabBarIcon: ({ tintColor }) => (
       <Image
         source={require('../images/list.png')}
-        style={[styles.icon, { tintColor: tintColor }]}
+        style={[styles.icon, { tintColor }]}
       />
-    ),
+    )
   }
 
   componentDidMount() {
@@ -73,8 +73,8 @@ class Scorecards extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  scorecards: state.scorecards,
+const mapStateToProps = state => ({
+  scorecards: state.scorecards
 })
 
 export default connect(mapStateToProps)(Scorecards)

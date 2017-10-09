@@ -4,9 +4,13 @@ import { combineReducers } from 'redux'
 // import storage  from './storage';
 // import nav      from './navigation';
 import scorecards from './scorecards'
+import clubs from './clubs'
+import play from './play'
 
 const rootReducer = combineReducers({
-  scorecards
+  scorecards,
+  clubs,
+  play
 })
 
 export default rootReducer

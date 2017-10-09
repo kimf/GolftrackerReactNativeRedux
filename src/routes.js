@@ -1,28 +1,41 @@
-import Statistics from 'screens/Statistics'
-import Scorecards from 'screens/Scorecards'
-
-import { TabNavigator } from 'react-navigation'
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation'
 
 import { colors } from 'styles'
 
-const screens = {
-  Scorecards: {
-    screen: Scorecards
-  },
-  Statistics: {
-    screen: Statistics
-  }
-}
+import Statistics from 'screens/Statistics'
+import Scorecards from 'screens/Scorecards'
+import NewRound from 'screens/NewRound'
 
 const TabStack = TabNavigator(
-  screens,
   {
+    Statistics: { screen: Statistics },
+    Scorecards: { screen: Scorecards },
+    NewRound: { screen: NewRound }
+  },
+  {
+    tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
+    initialRouteName: 'Statistics',
     animationEnabled: false,
     tabBarOptions: {
-      activeTintColor: colors.blue
+      inactiveTintColor: colors.muted,
+      activeTintColor: colors.blue,
+      showIcon: true,
+      showLabel: true
     }
   }
 )
 
-export default TabStack
+const MainStack = StackNavigator(
+  {
+    Main: { screen: TabStack }
+    // Here would go modal
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'Main'
+  }
+
+)
+
+export default MainStack
