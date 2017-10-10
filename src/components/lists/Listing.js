@@ -34,9 +34,11 @@ export default class Listing extends Component {
       if (this.resetNavigationOnNextStep) {
         const resetAction = NavigationActions.reset({
           index: 0,
+          key: null,
           actions: [NavigationActions.navigate({ routeName: this.nextStep })]
         })
         this.props.navigation.dispatch(resetAction)
+        // this.navigator.dispatch(actionToDispatch);
       } else {
         this.props.navigation.navigate(this.nextStep)
       }

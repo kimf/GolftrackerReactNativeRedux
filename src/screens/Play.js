@@ -81,7 +81,7 @@ class Play extends Component {
           flex: 1,
           height: '100%',
           alignItems: 'stretch',
-          backgroundColor: colors.green
+          backgroundColor: colors.lightGray
         }}
       >
         <ScrollView
@@ -100,7 +100,7 @@ class Play extends Component {
           {holes.map(h => (
             <HoleView
               key={`hole_view_${h.id}`}
-              hole={h}
+              tee={h}
               isActive={h.number === currentHole.number}
               holesCount={holes.length}
             />

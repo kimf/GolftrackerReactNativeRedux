@@ -66,6 +66,20 @@ export default StyleSheet.create({
     borderColor: colors.lightGray,
     flexDirection: 'row',
     padding: 10
+  },
+
+  gridView: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+
+  gridButton: {
+    flex: 1,
+    backgroundColor: colors.dark
+  },
+
+  gridButtonText: {
+    color: colors.white
   }
 
 })

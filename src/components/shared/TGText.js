@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 })
 
 const TGText = ({
-  onPress, style, viewStyle, children, ...rest
+ onPress, style, viewStyle, children, ...rest 
 }) => {
   const fontSize = style
     ? (StyleSheet.flatten(style).fontSize || FONT_SIZE)

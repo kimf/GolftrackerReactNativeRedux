@@ -1,39 +1,77 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { View } from 'react-native'
-import { shape } from 'prop-types'
+import { connect } from 'react-redux'
+import { shape, func } from 'prop-types'
 
-import styles, { colors, deviceHeight, deviceWidth, NAVBAR_HEIGHT } from 'styles'
+import { colors, deviceHeight, deviceWidth, NAVBAR_HEIGHT } from 'styles'
 import TGText from 'shared/TGText'
 import Header from 'shared/Header'
 
-const HoleView = ({ hole }) => {
-  console.log(hole)
-  return (
-    <View style={{ flex: 1, backgroundColor: colors.green }}>
-      <Header title={`${hole.hole.number}`} />
-      <View style={{
-        marginHorizontal: 10,
-        marginTop: NAVBAR_HEIGHT + 20,
-        height: deviceHeight - 170,
-        width: deviceWidth - 20,
-        backgroundColor: colors.white,
-        borderRadius: 10,
-        shadowColor: colors.darkGreen,
-        shadowOffset: { width: 5, height: 5 },
-        shadowRadius: 1,
-        shadowOpacity: 0.5,
-        elevation: 5
-      }}
-      >
-        <TGText>{hole.hole.par}</TGText>
+import ShotListItem from 'play/ShotListItem'
+import ShotInput from 'play/ShotInput'
+
+import { removeShot, setShotData } from 'actions/play'
+
+class HoleView extends Component {
+  static propTypes = {
+    tee: shape().isRequired,
+    dispatch: func.isRequired
+  }
+
+  setShotData = (shot, index) => {
+    const holeId = this.props.tee.id
+    this.props.dispatch(setShotData(shot, holeId, index))
+  }
+
+  removeShot = (holeId, index) => {
+    this.props.dispatch(removeShot(holeId, index))
+  }
+
+  render() {
+    const { tee } = this.props
+    const { hole, shots } = tee
+
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.lightGray }}>
+        <Header title={`${hole.number}`}>
+          <TGText>{tee.length}m - </TGText>
+          <TGText>Par: {hole.par} - </TGText>
+          <TGText>Hcp: {hole.index}</TGText>
+        </Header>
+        <View style={{
+          margin: 10,
+          padding: 10,
+          paddingTop: NAVBAR_HEIGHT + 10,
+          height: deviceHeight - 20,
+          width: deviceWidth - 20,
+          backgroundColor: colors.white
+        }}
+        >
+          {shots.map((shot, index) => {
+            if (shot.finished) {
+              return (
+                <ShotListItem
+                  shot={shot}
+                  par={hole.par}
+                  key={`shot_input_${shot.id}_hole_${hole.id}`}
+                  onRemove={() => this.removeShot(tee.id, index)}
+                />
+              )
+            }
+            return (
+              <ShotInput
+                shot={shot}
+                par={hole.par}
+                key={`shot_input_${shot.id}_hole_${hole.id}`}
+                index={index}
+                onSetData={this.setShotData}
+              />
+            )
+          })}
+        </View>
       </View>
-    </View >
-  )
+    )
+  }
 }
 
-
-HoleView.propTypes = {
-  hole: shape().isRequired
-}
-
-export default HoleView
+export default connect()(HoleView)
