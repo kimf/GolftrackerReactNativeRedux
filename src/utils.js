@@ -1,4 +1,4 @@
-import { AsyncStorage } from 'react-native'
+// import { AsyncStorage } from 'react-native'
 
 export const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 // avg.toLocaleString('sv', {maximumFractionDigits: 1, useGrouping:false})

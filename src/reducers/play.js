@@ -4,9 +4,10 @@ const initialState = {
   course: null,
   club: null,
   holes: [],
-  currentHole: 0,
-  shots: {}
+  currentHoleIndex: 0
 }
+
+const FIRST_SHOT = { lie: 'TEE', finished: false }
 
 export default function play(state = initialState, action) {
   switch (action.type) {
@@ -26,18 +27,24 @@ export default function play(state = initialState, action) {
       return { ...state, loading: true }
 
     case 'RECEIVE_HOLES': {
-      const shots = {}
-      action.holes.map((hole) => { shots[hole.id] = [{ lie: 'TEE', finished: false }] })
+      const holes = []
+      action.holes.forEach((hole) => {
+        const withShot = {
+          ...hole,
+          shots: [FIRST_SHOT]
+        }
+        holes.push(withShot)
+      })
+
       return {
         ...state,
-        loading: false,
-        holes: action.holes,
-        shots
+        holes,
+        loading: false
       }
     }
 
     case 'CHANGE_HOLE':
-      return { ...state, currentHole: action.index }
+      return { ...state, currentHoleIndex: action.index }
 
     case 'SET_SHOT_DATA': {
       const searchPath = ['shots', `${action.holeId}`]

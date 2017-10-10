@@ -1,24 +1,22 @@
 import React, { Component } from 'react'
 import { Image, View, FlatList, Text } from 'react-native'
-import { arrayOf, shape, func, bool } from 'prop-types'
+import { arrayOf, func, bool } from 'prop-types'
 import { connect } from 'react-redux'
 import { fetchScorecardsIfNeeded } from 'actions/scorecards'
+import { sortedByParsedDate } from 'utils'
 
 import Header from 'shared/Header'
 import Loading from 'shared/Loading'
 
 import ScorecardRow from 'scorecards/ScorecardRow'
-
-import styles, { colors, NAVBAR_HEIGHT } from '../styles'
 import { scorecardShape } from 'propTypes'
+import styles, { colors, NAVBAR_HEIGHT } from '../styles'
 
 class Scorecards extends Component {
   static propTypes = {
     dispatch: func.isRequired,
-    scorecards: shape({
-      loading: bool,
-      scorecards: arrayOf(scorecardShape)
-    })
+    loading: bool.isRequired,
+    scorecards: arrayOf(scorecardShape)
   }
 
   static defaultProps = {
@@ -43,13 +41,13 @@ class Scorecards extends Component {
   }
 
   render() {
-    const { scorecards } = this.props
+    const { loading, scorecards } = this.props
 
-    if (scorecards.loading) {
+    if (loading) {
       return <Loading text="Laddar scorekort" />
     }
 
-    if (scorecards.scorecards.length === 0) {
+    if (scorecards.length === 0) {
       return <Text>Inga scorekort</Text>
     }
 
@@ -62,7 +60,7 @@ class Scorecards extends Component {
         <FlatList
           removeClippedSubviews={false}
           style={{ backgroundColor: colors.white, marginTop: NAVBAR_HEIGHT, padding: 10 }}
-          data={scorecards.scorecards}
+          data={scorecards}
           renderItem={({ item }) => (
             <ScorecardRow scorecard={item} />
           )}
@@ -74,7 +72,8 @@ class Scorecards extends Component {
 }
 
 const mapStateToProps = state => ({
-  scorecards: state.scorecards
+  loading: state.scorecards.loading,
+  scorecards: sortedByParsedDate(state.scorecards.scorecards, 'date')
 })
 
 export default connect(mapStateToProps)(Scorecards)

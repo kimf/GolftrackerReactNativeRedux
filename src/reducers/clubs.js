@@ -1,3 +1,5 @@
+import { sorted } from 'utils'
+
 const initialState = {
   loading: false,
   clubs: []
@@ -8,13 +10,14 @@ export default function clubsReducer(state = initialState, action) {
     case 'REQUEST_CLUBS':
       return { ...state, loading: true }
 
-    case 'RECEIVE_CLUBS':
+    case 'RECEIVE_CLUBS': {
       return {
         ...state,
-        loading: false,
         clubs: action.clubs,
+        loading: false,
         receivedAt: action.receivedAt
       }
+    }
 
     default:
       return state
