@@ -13,6 +13,6 @@ export const PUTT_RESULTS = [
   'OFF THE GREEN'
 ]
 
-export const API_URL = (process.env.NODE_ENV === 'development')
+export const API_URL = __DEV__
   ? 'http://localhost:9292'
-  : 'https://golfstats.fransman.se'
+  : 'http://golfstats.fransman.se'
