@@ -49,8 +49,8 @@ class Play extends Component {
 
   componentDidMount() {
     const { slope } = this.props
-    this.props.dispatch(fetchHolesIfNeeded(slope.id))
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    this.props.dispatch(fetchHolesIfNeeded(slope.id))
   }
 
   handlePageChange = (e) => {

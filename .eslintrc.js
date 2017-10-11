@@ -10,6 +10,7 @@ module.exports = {
   globals: {
     "__DEV__": true,
     "window": true,
+    "navigator": true,
     "fetch": true,
     "requestAnimationFrame": true
   },
