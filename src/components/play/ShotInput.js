@@ -31,8 +31,7 @@ export default class ShotInput extends Component {
   addResult = (result) => {
     let goingFor = 'FAIRWAY'
     let success = false
-
-    const endLie = result.split(' ').slice(-1)
+    const endLie = result
 
     if (['HIT GREEN', 'MISS GREEN', 'IN THE HOLE'].includes(result)) {
       goingFor = 'GREEN'

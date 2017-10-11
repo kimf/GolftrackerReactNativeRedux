@@ -59,9 +59,7 @@ export default function play(state = initialState, action) {
       // All regular properties are there
       const requiredKeys = ['success', 'lie', 'club', 'goingFor', 'endLie']
       const foundKeys = Object.keys(newShot)
-      console.log(foundKeys)
       if (requiredKeys.every(key => foundKeys.indexOf(key) !== -1)) {
-        console.log('inside special finished loop')
         finished = true
 
         // Special rules apply for Approach shot
@@ -78,6 +76,10 @@ export default function play(state = initialState, action) {
         }
       }
 
+      if (newShot.endLie) {
+        newShot.endLie = newShot.endLie.replace('HIT ', '').replace('MISS ', '')
+      }
+
       newShot.finished = finished
 
       // update shot data in shot-array
@@ -86,14 +88,22 @@ export default function play(state = initialState, action) {
       if (newShot.finished && newShot.endLie !== 'IN THE HOLE') {
         // add a new shot with previous shot's endLie
         const addShot = makeShot(holeIndex, newShot.endLie)
-        newShotList = dotProp.set(state, `holes.${action.holeIndex}.shots`, shots => [...shots, addShot])
+        newShotList = dotProp.set(newShotList, `holes.${action.holeIndex}.shots`, shots => [...shots, addShot])
       }
 
       return newShotList
     }
 
-    case 'REMOVE_SHOT':
-      return dotProp.delete(state, `holes.${action.holeIndex}.shots.${action.shotIndex}`)
+    case 'REMOVE_SHOT': {
+      // remove all shots after this one, and create a new one with the new last shots endLie
+      const { holeIndex, shotIndex } = action
+      const { shots } = state.holes[holeIndex]
+      const filteredShots = shots.slice(0, shotIndex)
+      const lastShot = filteredShots.filter(s => s.finished).slice(-1)[0]
+      const addShot = makeShot(holeIndex, lastShot ? lastShot.endLie : 'TEE')
+      const newShotArray = [...filteredShots, addShot]
+      return dotProp.set(state, `holes.${holeIndex}.shots`, newShotArray)
+    }
 
     case 'END_ROUND':
       return initialState

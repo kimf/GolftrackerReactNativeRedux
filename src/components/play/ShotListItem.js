@@ -1,35 +1,40 @@
 import React from 'react'
 import { View, Button } from 'react-native'
-import { /* number, */func, shape } from 'prop-types'
+import { /* number, */bool, func, shape } from 'prop-types'
 
 import TGText from 'shared/TGText'
+import styles from 'styles'
 
-const ShotListItem = ({ shot, onRemove }) => {
+const ShotListItem = ({ shot, onRemove, isRemovable }) => {
   const {
-    lie, goingFor, club, distanceFromHole,
+    lie, club, distanceFromHole, distance,
     proximityToHole, missPosition, endLie
-    // success
+    // success, goingFor
   } = shot
 
+  console.log(shot)
+
   // const className = success ? 'success' : 'fail'
+  // goingFor
   return (
-    <View style={{ flex: 1 }}>
-      <TGText>{club}</TGText>
-      <TGText>{lie ? (`- lie${lie}`) : ''}</TGText>
-      <TGText>{goingFor ? (`- goingFor${goingFor}`) : ''}</TGText>
-      <TGText>{distanceFromHole ? (`- distanceFromHole${distanceFromHole}`) : ''}</TGText>
-      <TGText>{proximityToHole ? (`- proximityToHole${proximityToHole}`) : ''}</TGText>
-      <TGText>{missPosition ? (`- missPosition${missPosition}`) : ''}</TGText>
-      <TGText>{endLie}</TGText>
-      <Button onPress={onRemove}>x</Button>
+    <View style={styles.listrow}>
+      <TGText>
+        {lie || ''} ({club})
+        {distanceFromHole || ''}{distance || ''}
+      </TGText>
+      <TGText>{proximityToHole || ''} {missPosition || ''} {endLie || ''}</TGText>
+      {isRemovable ? <Button onPress={onRemove} title="x" /> : null}
     </View>
   )
 }
 
 ShotListItem.propTypes = {
   shot: shape().isRequired,
+  isRemovable: bool,
   // par: number.isRequired,
   onRemove: func.isRequired
 }
+
+ShotListItem.defaultProps = { isRemovable: false }
 
 export default ShotListItem

@@ -38,6 +38,7 @@ class HoleView extends Component {
           <TGText>{tee.length}m - </TGText>
           <TGText>Par: {hole.par} - </TGText>
           <TGText>Hcp: {hole.index}</TGText>
+          <TGText>Shots: {shots.filter(s => s.finished).length}</TGText>
         </Header>
         <View style={{
           margin: 10,
@@ -50,11 +51,13 @@ class HoleView extends Component {
         >
           {shots.map((shot, index) => {
             if (shot.finished) {
+              const lastFinishedId = shots.filter(s => s.finished).slice(-1)[0].id
               return (
                 <ShotListItem
                   shot={shot}
                   par={hole.par}
                   key={`shot_input_${shot.id}_hole_${hole.id}`}
+                  isRemovable={shot.id === lastFinishedId}
                   onRemove={() => this.removeShot(holeIndex, index)}
                 />
               )
