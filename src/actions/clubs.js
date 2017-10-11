@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { API_URL } from 'constants'
 
 function requestClubs() {

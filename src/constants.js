@@ -13,6 +13,8 @@ export const PUTT_RESULTS = [
   'OFF THE GREEN'
 ]
 
-export const API_URL = __DEV__
-  ? 'http://localhost:9292'
-  : 'http://golfstats.fransman.se'
+// export const API_URL = __DEV__
+//   ? 'http://localhost:9292'
+//   : 'http://golfstats.fransman.se'
+
+export const API_URL = 'http://golfstats.fransman.se'

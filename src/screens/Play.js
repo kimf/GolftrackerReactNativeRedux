@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
-import { ScrollView, View } from 'react-native'
+import { LayoutAnimation, ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
 import { arrayOf, bool, shape, func, number, string } from 'prop-types'
 
 import Loading from 'shared/Loading'
-
+import TGText from 'shared/TGText'
 import HoleView from 'play/HoleView'
+import ScoringFooter from 'play/ScoringFooter'
+
+import Gps from 'play/Gps'
+
 import { getClub, getCourse, getSlope } from 'selectors'
 import { fetchHolesIfNeeded } from 'actions/holes'
 import { changeHole } from 'actions/play'
-import { deviceWidth, colors } from 'styles'
+import { deviceWidth, deviceHeight, colors } from 'styles'
 
 class Play extends Component {
   static propTypes = {
@@ -41,9 +45,12 @@ class Play extends Component {
 
   static defaultProps = { currentHoleIndex: 0 }
 
+  state = { modal: 'gps' }
+
   componentDidMount() {
     const { slope } = this.props
     this.props.dispatch(fetchHolesIfNeeded(slope.id))
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
   }
 
   handlePageChange = (e) => {
@@ -57,10 +64,17 @@ class Play extends Component {
     }
   }
 
+  showModal = modal => this.setState(state => ({ ...state, modal }))
+  closeModal = () => this.setState(state => ({ ...state, modal: null }))
+
   render() {
     const { loading, holes, currentHoleIndex } = this.props
-
+    const { modal } = this.state
     const currentHole = holes[currentHoleIndex]
+
+    const menuPosition = modal && modal === 'menu' ? 0 : -deviceHeight
+    const gpsPosition = modal && modal === 'gps' ? 0 : -deviceHeight
+    const scorecardPosition = modal && modal === 'scorecard' ? 0 : -deviceHeight
 
     if (loading) {
       return <Loading text="Laddar håldata, typ" />
@@ -102,6 +116,18 @@ class Play extends Component {
             />
           ))}
         </ScrollView>
+        <ScoringFooter
+          showMenu={() => this.showModal('menu')}
+          showScorecard={() => this.showModal('scorecard')}
+          showGps={() => this.showModal('gps')}
+        />
+        <Gps top={gpsPosition} close={() => this.closeModal('gps')} />
+        <View style={{ top: menuPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red' }}>
+          <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>MENY</TGText>
+        </View>
+        <View style={{ top: scorecardPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red' }}>
+          <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('scorecard')}>SCOREKORT</TGText>
+        </View>
       </View>
     )
   }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { View } from 'react-native'
 import { func, string } from 'prop-types'
 
 import TGText from 'shared/TGText'
@@ -10,7 +9,7 @@ const ListItem = ({ onPress, title }) => (
   <TouchableView
     key={`course_row_${title}`}
     onPress={onPress}
-    style={styles.listrow}
+    style={[styles.listrow]}
   >
     <TGText style={{ flex: 1, fontWeight: 'bold' }}>
       {title}

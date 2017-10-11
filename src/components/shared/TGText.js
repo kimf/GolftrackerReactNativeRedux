@@ -17,9 +17,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const TGText = ({
- onPress, style, viewStyle, children, ...rest 
-}) => {
+const TGText = ({ onPress, style, viewStyle, children, ...rest }) => {
   const fontSize = style
     ? (StyleSheet.flatten(style).fontSize || FONT_SIZE)
     : FONT_SIZE
@@ -31,7 +29,7 @@ const TGText = ({
     </Text>
   )
   return onPress
-    ? <TouchableView key={rest.key} style={viewStyle} onPress={onPress}>{text}</TouchableView>
+    ? <TouchableView key={rest.key} style={[viewStyle]} onPress={onPress}>{text}</TouchableView>
     : text
 }
 

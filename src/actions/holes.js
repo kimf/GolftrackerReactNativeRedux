@@ -1,5 +1,3 @@
-import fetch from 'isomorphic-fetch'
-
 import { API_URL } from 'constants'
 
 export const REQUEST_HOLES = 'REQUEST_HOLES'

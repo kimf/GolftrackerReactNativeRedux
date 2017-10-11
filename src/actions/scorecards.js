@@ -1,12 +1,8 @@
-import fetch from 'isomorphic-fetch'
-
 import { API_URL } from 'constants'
 
 export const REQUEST_SCORECARDS = 'REQUEST_SCORECARDS'
 function requestScorecards() {
-  return {
-    type: REQUEST_SCORECARDS
-  }
+  return { type: REQUEST_SCORECARDS }
 }
 
 export const RECEIVE_SCORECARDS = 'RECEIVE_SCORECARDS'

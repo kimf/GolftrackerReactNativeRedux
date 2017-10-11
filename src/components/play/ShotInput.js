@@ -31,7 +31,7 @@ export default class ShotInput extends Component {
   addResult = (result) => {
     let goingFor = 'FAIRWAY'
     let success = false
-    const endLie = result
+    let endLie = null
 
     if (['HIT GREEN', 'MISS GREEN', 'IN THE HOLE'].includes(result)) {
       goingFor = 'GREEN'
@@ -39,6 +39,11 @@ export default class ShotInput extends Component {
 
     if (['HIT GREEN', 'HIT FAIRWAY', 'IN THE HOLE'].includes(result)) {
       success = true
+      endLie = goingFor
+    }
+
+    if (result === 'IN THE HOLE') {
+      endLie = 'HOLE'
     }
 
     this.setData({ goingFor, success, endLie })
