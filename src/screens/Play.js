@@ -15,8 +15,8 @@ class Play extends Component {
   static propTypes = {
     loading: bool.isRequired,
     dispatch: func.isRequired,
-    club: shape().isRequired,
-    course: shape().isRequired,
+    // club: shape().isRequired,
+    // course: shape().isRequired,
     slope: shape().isRequired,
     holes: arrayOf(shape({
       id: number.isRequired,

@@ -68,7 +68,7 @@ export default StyleSheet.create({
     padding: 10
   },
 
-  lineBreak: {flexDirection: 'column'},
+  lineBreak: { flexDirection: 'column' },
 
   gridTitle: {
     fontSize: 24,

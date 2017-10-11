@@ -12,8 +12,6 @@ const ShotListItem = ({ shot, onRemove, isRemovable }) => {
     // success, goingFor
   } = shot
 
-  console.log(shot)
-
   // const className = success ? 'success' : 'fail'
   // goingFor
   return (
