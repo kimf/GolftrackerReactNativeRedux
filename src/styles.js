@@ -68,18 +68,30 @@ export default StyleSheet.create({
     padding: 10
   },
 
+  gridTitle: {
+    fontSize: 24,
+    paddingBottom: 20
+  },
+
   gridView: {
-    flex: 1,
-    justifyContent: 'space-between'
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap'
   },
 
   gridButton: {
-    flex: 1,
-    backgroundColor: colors.dark
+    margin: 5,
+    width: '20%',
+    height: 60,
+    backgroundColor: colors.dark,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   gridButtonText: {
-    color: colors.white
+    color: colors.white,
+    fontWeight: 'bold',
+    textAlign: 'center'
   }
 
 })

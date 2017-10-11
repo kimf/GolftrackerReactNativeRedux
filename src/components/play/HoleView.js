@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
-import { shape, func } from 'prop-types'
+import { shape, func, number } from 'prop-types'
 
 import { colors, deviceHeight, deviceWidth, NAVBAR_HEIGHT } from 'styles'
 import TGText from 'shared/TGText'
@@ -14,21 +14,22 @@ import { removeShot, setShotData } from 'actions/play'
 
 class HoleView extends Component {
   static propTypes = {
+    holeIndex: number.isRequired,
     tee: shape().isRequired,
     dispatch: func.isRequired
   }
 
-  setShotData = (shot, index) => {
-    const holeId = this.props.tee.id
-    this.props.dispatch(setShotData(shot, holeId, index))
+  setShotData = (shot, shotIndex) => {
+    const { holeIndex } = this.props
+    this.props.dispatch(setShotData(shot, holeIndex, shotIndex))
   }
 
-  removeShot = (holeId, index) => {
-    this.props.dispatch(removeShot(holeId, index))
+  removeShot = (holeIndex, shotIndex) => {
+    this.props.dispatch(removeShot(holeIndex, shotIndex))
   }
 
   render() {
-    const { tee } = this.props
+    const { tee, holeIndex } = this.props
     const { hole, shots } = tee
 
     return (
@@ -54,7 +55,7 @@ class HoleView extends Component {
                   shot={shot}
                   par={hole.par}
                   key={`shot_input_${shot.id}_hole_${hole.id}`}
-                  onRemove={() => this.removeShot(tee.id, index)}
+                  onRemove={() => this.removeShot(holeIndex, index)}
                 />
               )
             }

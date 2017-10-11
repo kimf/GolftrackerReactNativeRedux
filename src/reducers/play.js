@@ -1,3 +1,10 @@
+import dotProp from 'dot-prop-immutable'
+
+const makeShot = (holeIndex, lie = 'TEE') => {
+  const id = `${Math.floor((Math.random() * 100) + 1)}_${new Date().getTime()}_${holeIndex}`
+  return { id, lie, finished: false }
+}
+
 const initialState = {
   loading: false,
   slope: null,
@@ -6,8 +13,6 @@ const initialState = {
   holes: [],
   currentHoleIndex: 0
 }
-
-const FIRST_SHOT = { lie: 'TEE', finished: false }
 
 export default function play(state = initialState, action) {
   switch (action.type) {
@@ -31,7 +36,7 @@ export default function play(state = initialState, action) {
       action.holes.forEach((hole) => {
         const withShot = {
           ...hole,
-          shots: [FIRST_SHOT]
+          shots: [makeShot(hole.id)]
         }
         holes.push(withShot)
       })
@@ -47,51 +52,48 @@ export default function play(state = initialState, action) {
       return { ...state, currentHoleIndex: action.index }
 
     case 'SET_SHOT_DATA': {
-      const searchPath = ['shots', `${action.holeId}`]
-      const shotList = state.getIn(searchPath)
-
-      if (shotList === undefined) {
-        return state.setIn(searchPath, action.shot)
-      }
-      // TODO - this seems pretty wrong!
-      const oldShot = shotList.get(action.shotIndex)
-      let newShot = oldShot.merge(action.shot)
+      const { holeIndex, shotIndex, shot } = action
+      const newShot = Object.assign({}, state.holes[holeIndex].shots[shotIndex], shot)
 
       let finished = false
       // All regular properties are there
       const requiredKeys = ['success', 'lie', 'club', 'goingFor', 'endLie']
       const foundKeys = Object.keys(newShot)
+      console.log(foundKeys)
       if (requiredKeys.every(key => foundKeys.indexOf(key) !== -1)) {
+        console.log('inside special finished loop')
         finished = true
 
         // Special rules apply for Approach shot
-        if (newShot.get('goingFor') === 'GREEN') {
-          finished = newShot.get('distanceFromHole') !== undefined
+        if (newShot.goingFor === 'GREEN') {
+          finished = newShot.distanceFromHole !== undefined
         }
         // Special rule for putt
-        if (newShot.get('goingFor') === 'HOLE') {
-          finished = newShot.get('distance') !== undefined
+        if (newShot.goingFor === 'HOLE') {
+          finished = newShot.distance !== undefined
         }
         // Special rules also apply for Misses
-        if (newShot.get('success') === false && !newShot.get('putt')) {
-          finished = newShot.get('missPosition') !== undefined
+        if (newShot.success === false && !newShot.putt) {
+          finished = newShot.missPosition !== undefined
         }
       }
 
-      newShot = newShot.set('finished', finished)
-      let newShotList = shotList.set(action.shotIndex, newShot)
+      newShot.finished = finished
 
-      if (newShot.get('finished') && newShot.get('endLie') !== 'IN THE HOLE') {
-        newShotList = newShotList.set(action.shotIndex + 1, { lie: newShot.get('endLie') })
+      // update shot data in shot-array
+      let newShotList = dotProp.set(state, `holes.${action.holeIndex}.shots.${action.shotIndex}`, newShot)
+
+      if (newShot.finished && newShot.endLie !== 'IN THE HOLE') {
+        // add a new shot with previous shot's endLie
+        const addShot = makeShot(holeIndex, newShot.endLie)
+        newShotList = dotProp.set(state, `holes.${action.holeIndex}.shots`, shots => [...shots, addShot])
       }
-      return state.setIn(searchPath, newShotList)
+
+      return newShotList
     }
 
-    case 'REMOVE_SHOT': {
-      const path = ['shots', `${action.holeId}`]
-      const shots = state.getIn(path)
-      return state.setIn(path, shots.delete(action.index))
-    }
+    case 'REMOVE_SHOT':
+      return dotProp.delete(state, `holes.${action.holeIndex}.shots.${action.shotIndex}`)
 
     case 'END_ROUND':
       return initialState

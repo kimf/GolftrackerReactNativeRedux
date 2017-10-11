@@ -32,6 +32,11 @@ module.exports = {
     "no-undef": 2,
     "no-unused-vars": 2,
     "global-require": 0,
+    "object-curly-newline": [
+      "error", {
+        "ObjectPattern": { "multiline": true }
+      }
+    ]
   },
   settings: {
     "import/resolver": {

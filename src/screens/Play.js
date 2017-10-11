@@ -39,9 +39,7 @@ class Play extends Component {
     currentHoleIndex: number
   }
 
-  static defaultProps = {
-    currentHoleIndex: 0
-  }
+  static defaultProps = { currentHoleIndex: 0 }
 
   componentDidMount() {
     const { slope } = this.props
@@ -54,16 +52,13 @@ class Play extends Component {
     if (offset) {
       const page = Math.round(offset.x / deviceWidth) + 1
       if (currentHoleIndex !== page) {
-        console.log(page)
         this.props.dispatch(changeHole(page))
       }
     }
   }
 
   render() {
-    const {
-      loading, holes, currentHoleIndex
-    } = this.props
+    const { loading, holes, currentHoleIndex } = this.props
 
     const currentHole = holes[currentHoleIndex]
 
@@ -97,12 +92,13 @@ class Play extends Component {
           pagingEnabled
           removeClippedSubviews
         >
-          {holes.map(h => (
+          {holes.map((h, index) => (
             <HoleView
               key={`hole_view_${h.id}`}
               tee={h}
               isActive={h.number === currentHole.number}
               holesCount={holes.length}
+              holeIndex={index}
             />
           ))}
         </ScrollView>

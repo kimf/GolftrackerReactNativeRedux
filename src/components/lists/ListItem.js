@@ -10,12 +10,11 @@ const ListItem = ({ onPress, title }) => (
   <TouchableView
     key={`course_row_${title}`}
     onPress={onPress}
+    style={styles.listrow}
   >
-    <View style={styles.listrow}>
-      <TGText style={{ flex: 1, fontWeight: 'bold' }}>
-        {title}
-      </TGText>
-    </View>
+    <TGText style={{ flex: 1, fontWeight: 'bold' }}>
+      {title}
+    </TGText>
   </TouchableView>
 )
 
