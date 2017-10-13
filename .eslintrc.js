@@ -9,6 +9,7 @@ module.exports = {
   ],
   globals: {
     "__DEV__": true,
+    "__OFFLINE__": true,
     "window": true,
     "navigator": true,
     "fetch": true,
