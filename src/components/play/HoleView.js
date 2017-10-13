@@ -16,7 +16,11 @@ class HoleView extends Component {
   static propTypes = {
     holeIndex: number.isRequired,
     tee: shape().isRequired,
-    dispatch: func.isRequired
+    dispatch: func.isRequired,
+    position: shape({
+      latitude: number.isRequired,
+      longitude: number.isRequired
+    }).isRequired
   }
 
   setShotData = (shot, shotIndex) => {
@@ -29,7 +33,7 @@ class HoleView extends Component {
   }
 
   render() {
-    const { tee, holeIndex } = this.props
+    const { tee, holeIndex, position } = this.props
     const { hole, shots } = tee
 
     return (
@@ -68,6 +72,7 @@ class HoleView extends Component {
                 par={hole.par}
                 key={`shot_input_${shot.id}_hole_${hole.id}`}
                 index={index}
+                position={position}
                 onSetData={this.setShotData}
               />
             )

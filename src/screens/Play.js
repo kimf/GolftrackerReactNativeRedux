@@ -15,6 +15,8 @@ import { fetchHolesIfNeeded } from 'actions/holes'
 import { changeHole } from 'actions/play'
 import { deviceWidth, deviceHeight, colors } from 'styles'
 
+const ASPECT_RATIO = deviceWidth / (deviceHeight - 40)
+
 class Play extends Component {
   static propTypes = {
     loading: bool.isRequired,
@@ -45,10 +47,24 @@ class Play extends Component {
 
   static defaultProps = { currentHoleIndex: 0 }
 
-  state = { modal: 'gps' }
+  state = { modal: null, position: null }
 
   componentDidMount() {
     const { slope } = this.props
+    navigator.geolocation.watchPosition(
+      (result) => {
+        const position = {
+          latitude: result.coords.latitude,
+          longitude: result.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0922 * ASPECT_RATIO
+        }
+        this.setState(state => ({ ...state, position }))
+      },
+      null,
+      { enableHighAccuracy: true, timeout: 20000, distanceFilter: 0.5 }
+    )
+
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
     this.props.dispatch(fetchHolesIfNeeded(slope.id))
   }
@@ -69,7 +85,7 @@ class Play extends Component {
 
   render() {
     const { loading, holes, currentHoleIndex } = this.props
-    const { modal } = this.state
+    const { modal, position } = this.state
     const currentHole = holes[currentHoleIndex]
 
     const menuPosition = modal && modal === 'menu' ? 0 : -deviceHeight
@@ -82,6 +98,10 @@ class Play extends Component {
 
     if (!currentHole) {
       return null
+    }
+
+    if (!position) {
+      return <Loading text="Laddar GPS..." />
     }
 
     return (
@@ -109,6 +129,7 @@ class Play extends Component {
           {holes.map((h, index) => (
             <HoleView
               key={`hole_view_${h.id}`}
+              position={position}
               tee={h}
               isActive={h.number === currentHole.number}
               holesCount={holes.length}
@@ -121,7 +142,11 @@ class Play extends Component {
           showScorecard={() => this.showModal('scorecard')}
           showGps={() => this.showModal('gps')}
         />
-        <Gps top={gpsPosition} close={() => this.closeModal('gps')} />
+        <Gps
+          top={gpsPosition}
+          close={() => this.closeModal('gps')}
+          position={position}
+        />
         <View style={{ top: menuPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red' }}>
           <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>MENY</TGText>
         </View>

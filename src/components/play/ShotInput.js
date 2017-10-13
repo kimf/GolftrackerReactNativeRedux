@@ -12,7 +12,11 @@ export default class ShotInput extends Component {
     index: number.isRequired,
     par: number.isRequired,
     onSetData: func.isRequired,
-    shot: shape().isRequired
+    shot: shape().isRequired,
+    position: shape({
+      latitude: number.isRequired,
+      longitude: number.isRequired
+    }).isRequired
   }
 
   componentWillReceiveProps() {
@@ -25,7 +29,8 @@ export default class ShotInput extends Component {
   }
 
   addClub = (club) => {
-    this.setData({ club })
+    const { position } = this.props
+    this.setData({ club, position })
   }
 
   addResult = (result) => {
@@ -47,10 +52,6 @@ export default class ShotInput extends Component {
     }
 
     this.setData({ goingFor, success, endLie })
-  }
-
-  addDistance = (distanceFromHole) => {
-    this.setData({ distanceFromHole })
   }
 
   addLie = (lie) => {
@@ -101,11 +102,6 @@ export default class ShotInput extends Component {
       title = 'WHERE DID YOU MISS IT?'
       items = MISSES
       onPress = this.addMissPosition
-    } else if (shot.goingFor === 'GREEN' && !shot.distanceFromHole) {
-      key = 'distance'
-      title = 'WHAT WAS THE DISTANCE TO FLAG?'
-      items = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(String)
-      onPress = this.addDistance
     }
 
     if (title && onPress) {

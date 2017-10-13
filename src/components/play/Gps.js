@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, StyleSheet, Image } from 'react-native'
-import { func, number } from 'prop-types'
+import { func, number, shape } from 'prop-types'
 
 import MapView from 'react-native-maps'
 
@@ -9,7 +9,7 @@ import Measurements from 'play/Measurements'
 
 import TGText from 'shared/TGText'
 import Loading from 'shared/Loading'
-import { colors, deviceHeight, deviceWidth } from 'styles'
+import { colors, deviceHeight } from 'styles'
 
 const styles = StyleSheet.create({
   view: {
@@ -40,26 +40,13 @@ const styles = StyleSheet.create({
 
 class Gps extends Component {
   state = {
-    region: null,
-    position: null,
-    measurePoint: null
+    greenPoint: null,
+    measurePoint: null,
+    region: null
   }
 
-  componentDidMount = () => {
-    navigator.geolocation.watchPosition(
-      (result) => {
-        const position = {
-          latitude: result.coords.latitude,
-          longitude: result.coords.longitude,
-          latitudeDelta: 0.025,
-          longitudeDelta: 0.025 * (deviceHeight - 40)
-        }
-        const region = this.state.region || position
-        this.setState(state => ({ ...state, position, region }))
-      },
-      null,
-      { enableHighAccuracy: true, timeout: 20000, distanceFilter: 0.5 }
-    )
+  componentWillMount() {
+    this.setState(state => ({ ...state, region: this.props.position }))
   }
 
   onRegionChange = region => this.setState(state => ({ ...state, region }))
@@ -76,9 +63,8 @@ class Gps extends Component {
   }
 
   render() {
-    const { close, top } = this.props
-    const { region } = this.state
-    const { position, measurePoint, greenPoint } = this.state
+    const { close, top, position } = this.props
+    const { region, measurePoint, greenPoint } = this.state
 
     if (!position) {
       return <Loading text="Måste godkänna GPS..." />
@@ -164,7 +150,13 @@ class Gps extends Component {
 
 Gps.propTypes = {
   close: func.isRequired,
-  top: number.isRequired
+  top: number.isRequired,
+  position: shape({
+    latitude: number.isRequired,
+    longitude: number.isRequired,
+    latitudeDelta: number.isRequired,
+    longitudeDelta: number.isRequired
+  }).isRequired
 }
 
 export default Gps

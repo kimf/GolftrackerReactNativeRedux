@@ -1,4 +1,5 @@
 import dotProp from 'dot-prop-immutable'
+import { calcDistance } from 'utils'
 
 const makeShot = (holeIndex, lie = 'TEE') => {
   const id = `${Math.floor((Math.random() * 100) + 1)}_${new Date().getTime()}_${holeIndex}`
@@ -54,6 +55,7 @@ export default function play(state = initialState, action) {
     case 'SET_SHOT_DATA': {
       const { holeIndex, shotIndex, shot } = action
       const newShot = Object.assign({}, state.holes[holeIndex].shots[shotIndex], shot)
+      const prevShot = state.holes[holeIndex].shots[shotIndex - 1]
 
       let finished = false
       // All regular properties are there
@@ -62,10 +64,6 @@ export default function play(state = initialState, action) {
       if (requiredKeys.every(key => foundKeys.indexOf(key) !== -1)) {
         finished = true
 
-        // Special rules apply for Approach shot
-        if (newShot.goingFor === 'GREEN') {
-          finished = newShot.distanceFromHole !== undefined
-        }
         // Special rule for putt
         if (newShot.goingFor === 'HOLE') {
           finished = newShot.distance !== undefined
@@ -84,6 +82,14 @@ export default function play(state = initialState, action) {
 
       // update shot data in shot-array
       let newShotList = dotProp.set(state, `holes.${action.holeIndex}.shots.${action.shotIndex}`, newShot)
+
+      // we have gotten club, then we can add this clubs startPos
+      // as the previous shot's endPos, if there is a prevShot of course
+      if (prevShot && shot.club) {
+        const distance = calcDistance(prevShot.position, newShot.position)
+        const newPrevShot = Object.assign({}, prevShot, { endPosition: newShot.position, distance })
+        newShotList = dotProp.set(newShotList, `holes.${action.holeIndex}.shots.${action.shotIndex - 1}`, newPrevShot)
+      }
 
       if (newShot.finished && newShot.endLie !== 'IN THE HOLE') {
         // add a new shot with previous shot's endLie

@@ -1,4 +1,7 @@
 // import { AsyncStorage } from 'react-native'
+import geolib from 'geolib'
+
+export const calcDistance = (x, y) => geolib.getDistance(x, y, 1)
 
 export const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 // avg.toLocaleString('sv', {maximumFractionDigits: 1, useGrouping:false})

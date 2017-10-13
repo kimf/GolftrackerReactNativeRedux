@@ -1,7 +1,8 @@
 import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { shape } from 'prop-types'
-import geolib from 'geolib'
+
+import { calcDistance } from 'utils'
 
 import TGText from 'shared/TGText'
 import { colors } from 'styles'
@@ -24,15 +25,13 @@ const styles = StyleSheet.create({
   }
 })
 
-const calculate = (x, y) => geolib.getDistance(x, y, 1)
-
 const Measurements = ({ user, measurePoint, green }) => (
   <View style={styles.view}>
     <TGText style={styles.label}>
-      X: {calculate(user, measurePoint)}m
+      X: {calcDistance(user, measurePoint)}m
     </TGText>
     <TGText style={styles.label}>
-      G: {calculate(measurePoint, green)}m
+      G: {calcDistance(measurePoint, green)}m
     </TGText>
   </View>
 )

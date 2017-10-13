@@ -7,7 +7,7 @@ import styles from 'styles'
 
 const ShotListItem = ({ shot, onRemove, isRemovable }) => {
   const {
-    lie, club, distanceFromHole, distance,
+    lie, club, distance,
     proximityToHole, missPosition, endLie
     // success, goingFor
   } = shot
@@ -18,7 +18,7 @@ const ShotListItem = ({ shot, onRemove, isRemovable }) => {
     <View style={styles.listrow}>
       <TGText>
         {lie || ''} ({club})
-        {distanceFromHole || ''}{distance || ''}
+        {distance || ''}
       </TGText>
       <TGText>{proximityToHole || ''} {missPosition || ''} {endLie || ''}</TGText>
       {isRemovable ? <Button onPress={onRemove} title="x" /> : null}
