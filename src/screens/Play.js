@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-import { LayoutAnimation, ScrollView, View } from 'react-native'
+import { ScrollView, View, DeviceEventEmitter, NativeModules } from 'react-native'
 import { connect } from 'react-redux'
-import { arrayOf, bool, shape, func, number, string } from 'prop-types'
+import { arrayOf, bool, shape, func, number } from 'prop-types'
+
+import location from 'hoc/location'
 
 import Loading from 'shared/Loading'
 import TGText from 'shared/TGText'
@@ -10,64 +12,55 @@ import ScoringFooter from 'play/ScoringFooter'
 
 import Gps from 'play/Gps'
 
+// import { regionFrom } from 'utils'
 import { getClub, getCourse, getSlope } from 'selectors'
 import { fetchHolesIfNeeded } from 'actions/holes'
 import { changeHole } from 'actions/play'
 import { deviceWidth, deviceHeight, colors } from 'styles'
+import { holeShape } from 'propTypes'
 
+const Location = NativeModules.RNLocation
 const ASPECT_RATIO = deviceWidth / (deviceHeight - 40)
+const LAT_DELTA = 0.0922
+const LNG_DELTA = 0.0922 * ASPECT_RATIO
 
 class Play extends Component {
   static propTypes = {
     loading: bool.isRequired,
     dispatch: func.isRequired,
-    // club: shape().isRequired,
-    // course: shape().isRequired,
     slope: shape().isRequired,
-    holes: arrayOf(shape({
-      id: number.isRequired,
-      length: number.isRequired,
-      lat: string,
-      lng: string,
-      hole: shape({
-        id: number.isRequired,
-        number: number.isRequired,
-        par: number.isRequired,
-        index: number.isRequired
-        // green_center_lat
-        // green_center_lng
-        // green_front_lat
-        // green_front_lng
-        // green_depth
-      }).isRequired,
-      shots: arrayOf(shape()).isRequired
-    })).isRequired,
+    holes: arrayOf(holeShape),
     currentHoleIndex: number
   }
 
-  static defaultProps = { currentHoleIndex: 0 }
+  static defaultProps = {
+    currentHoleIndex: 0,
+    holes: []
+  }
 
-  state = { modal: null, position: null }
+  state = { modal: 'gps', position: null }
+
+  componentWillMount() {
+    Location.requestWhenInUseAuthorization()
+    Location.startUpdatingLocation()
+    this.subscription = DeviceEventEmitter.addListener('locationUpdated', this.updateLocation)
+  }
 
   componentDidMount() {
     const { slope } = this.props
-    navigator.geolocation.watchPosition(
-      (result) => {
-        const position = {
-          latitude: result.coords.latitude,
-          longitude: result.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0922 * ASPECT_RATIO
-        }
-        this.setState(state => ({ ...state, position }))
-      },
-      null,
-      { enableHighAccuracy: true, timeout: 20000, distanceFilter: 0.5 }
-    )
-
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
     this.props.dispatch(fetchHolesIfNeeded(slope.id))
   }
+
+  componentWillUnmount() {
+    Location.stopUpdatingLocation()
+    DeviceEventEmitter.removeListener('locationUpdated')
+  }
+
+  subscription = null
+
+  showModal = modal => this.setState(state => ({ ...state, modal }))
+
+  closeModal = () => this.setState(state => ({ ...state, modal: null }))
 
   handlePageChange = (e) => {
     const { currentHoleIndex } = this.props
@@ -80,8 +73,27 @@ class Play extends Component {
     }
   }
 
-  showModal = modal => this.setState(state => ({ ...state, modal }))
-  closeModal = () => this.setState(state => ({ ...state, modal: null }))
+  updateLocation = (loc) => {
+    /* Example location returned
+    {
+      speed: -1,
+      longitude: -0.1337,
+      latitude: 51.50998,
+      accuracy: 5,
+      heading: -1,
+      altitude: 0,
+      altitudeAccuracy: -1
+    }
+    */
+    const position = {
+      ...loc,
+      latitudeDelta: LAT_DELTA,
+      longitudeDelta: LNG_DELTA
+    }
+    // eslint-disable-next-line
+    console.log('position', position)
+    this.setState(state => ({ ...state, position }))
+  }
 
   render() {
     const { loading, holes, currentHoleIndex } = this.props
@@ -168,4 +180,6 @@ const mapStateToProps = state => ({
   currentHole: state.play.currentHole
 })
 
-export default connect(mapStateToProps)(Play)
+const playWithGps = location(Play)
+
+export default connect(mapStateToProps)(playWithGps)
