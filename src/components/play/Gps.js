@@ -76,8 +76,6 @@ class Gps extends Component {
       <View style={[styles.view, { top }]}>
         <View style={styles.container}>
           <MapView
-            minZoomLevel={16}
-            scrollEnabled={false}
             style={styles.map}
             mapType="satellite"
             loadingEnabled
