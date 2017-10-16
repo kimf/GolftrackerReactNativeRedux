@@ -7,9 +7,7 @@ import { connect } from 'react-redux'
 class RouteDecider extends Component {
   static propTypes = {
     play: shape().isRequired,
-    navigation: shape({
-      dispatch: func.isRequired
-    }).isRequired
+    navigation: shape({ dispatch: func.isRequired }).isRequired
   }
 
   componentDidMount() {
@@ -34,8 +32,6 @@ class RouteDecider extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  play: state.play
-})
+const mapStateToProps = state => ({ play: state.play })
 
 export default connect(mapStateToProps)(RouteDecider)

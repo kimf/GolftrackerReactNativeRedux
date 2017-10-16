@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import Listing from 'lists/Listing'
 import { getClub } from 'selectors'
+import { sortedByName } from 'utils'
 import navOptions from './navigationOptions'
 
 class CoursePicker extends Listing {
@@ -14,8 +15,6 @@ class CoursePicker extends Listing {
 }
 
 
-const mapStateToProps = state => ({
-  items: getClub(state).courses.sort((a, b) => a.name.localeCompare(b.name, 'sv-SE'))
-})
+const mapStateToProps = state => ({ items: sortedByName(getClub(state).courses) })
 
 export default connect(mapStateToProps)(CoursePicker)

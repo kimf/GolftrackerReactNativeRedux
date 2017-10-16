@@ -1,7 +1,9 @@
 import React from 'react'
 import { Image } from 'react-native'
+
 import styles from 'styles'
 
+/* eslint-disable react/prop-types */
 const navigationOptions = {
   tabBarLabel: 'SPELA GOLF',
   tabBarIcon: ({ tintColor }) => (
@@ -11,5 +13,6 @@ const navigationOptions = {
     />
   )
 }
+/* eslint-enable react/prop-types */
 
 export default navigationOptions

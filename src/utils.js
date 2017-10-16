@@ -18,6 +18,8 @@ export const sortedByParsedDate = (array, attribute) => sorted(
   attribute
 )
 
+export const sortedByName = items => items.sort((a, b) => a.name.localeCompare(b.name, 'sv-SE'))
+
 // ranked :: Array -> String -> Array
 export const ranked = (array, attribute, rankingAttribute, reversed) => {
   const scores = array.map(x => x[rankingAttribute])
@@ -30,11 +32,11 @@ export const ranked = (array, attribute, rankingAttribute, reversed) => {
   return reversed ? rankedArr.reverse() : rankedArr
 }
 
-const cmp = (a, b) => {
-  if (a > b) return +1
-  if (a < b) return -1
-  return 0
-}
+// const cmp = (a, b) => {
+//   if (a > b) return +1
+//   if (a < b) return -1
+//   return 0
+// }
 
 export const calculateExtraStrokes = (holeIndex, playerStrokes, holesCount) => {
   let extra = 0

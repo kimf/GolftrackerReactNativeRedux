@@ -16,8 +16,7 @@ const ScorecardRow = ({ scorecard }) => (
   </View>
 )
 
-ScorecardRow.propTypes = {
-  scorecard: scorecardShape.isRequired
-}
+// eslint-disable-next-line react/no-typos
+ScorecardRow.propTypes = { scorecard: scorecardShape.isRequired }
 
 export default ScorecardRow

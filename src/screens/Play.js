@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
-import { ScrollView, View, DeviceEventEmitter, NativeModules } from 'react-native'
+import { ScrollView, View, DeviceEventEmitter, NativeModules, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { arrayOf, bool, shape, func, number } from 'prop-types'
-
-import location from 'hoc/location'
 
 import Loading from 'shared/Loading'
 import TGText from 'shared/TGText'
 import HoleView from 'play/HoleView'
 import ScoringFooter from 'play/ScoringFooter'
 
-import Gps from 'play/Gps'
+// import Gps from 'play/Gps'
 
 // import { regionFrom } from 'utils'
 import { getClub, getCourse, getSlope } from 'selectors'
@@ -38,12 +36,25 @@ class Play extends Component {
     holes: []
   }
 
-  state = { modal: 'gps', position: null }
+  state = { modal: null, position: null }
 
   componentWillMount() {
-    Location.requestWhenInUseAuthorization()
-    Location.startUpdatingLocation()
-    this.subscription = DeviceEventEmitter.addListener('locationUpdated', this.updateLocation)
+    if (Platform.OS === 'web') {
+      this.subscription = navigator.geolocation.watchPosition(
+        this.updateLocation,
+        // eslint-disable-next-line no-console
+        (err) => { console.warn(`ERROR(${err.code}): ${err.message}`) },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      )
+    } else {
+      Location.requestWhenInUseAuthorization()
+      Location.startUpdatingLocation()
+      this.subscription = DeviceEventEmitter.addListener('locationUpdated', this.updateLocation)
+    }
   }
 
   componentDidMount() {
@@ -52,8 +63,12 @@ class Play extends Component {
   }
 
   componentWillUnmount() {
-    Location.stopUpdatingLocation()
-    DeviceEventEmitter.removeListener('locationUpdated')
+    if (Platform.OS === 'web') {
+      navigator.geolocation.clearWatch(this.subscription)
+    } else {
+      Location.stopUpdatingLocation()
+      DeviceEventEmitter.removeListener('locationUpdated')
+    }
   }
 
   subscription = null
@@ -101,7 +116,7 @@ class Play extends Component {
     const currentHole = holes[currentHoleIndex]
 
     const menuPosition = modal && modal === 'menu' ? 0 : -deviceHeight
-    const gpsPosition = modal && modal === 'gps' ? 0 : -deviceHeight
+    // const gpsPosition = modal && modal === 'gps' ? 0 : -deviceHeight
     const scorecardPosition = modal && modal === 'scorecard' ? 0 : -deviceHeight
 
     if (loading) {
@@ -154,21 +169,32 @@ class Play extends Component {
           showScorecard={() => this.showModal('scorecard')}
           showGps={() => this.showModal('gps')}
         />
-        <Gps
-          top={gpsPosition}
-          close={() => this.closeModal('gps')}
-          position={position}
-        />
-        <View style={{ top: menuPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red' }}>
+        <View style={{
+          top: menuPosition,
+          position: 'absolute',
+          width: deviceWidth,
+          height: deviceHeight,
+          backgroundColor: 'red'
+        }}
+        >
           <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>MENY</TGText>
         </View>
-        <View style={{ top: scorecardPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red' }}>
+        <View style={{
+          top: scorecardPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red'
+        }}
+        >
           <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('scorecard')}>SCOREKORT</TGText>
         </View>
       </View>
     )
   }
 }
+
+// <Gps
+//   top={gpsPosition}
+//   close={() => this.closeModal('gps')}
+//   position={position}
+// />
 
 
 const mapStateToProps = state => ({
@@ -180,6 +206,4 @@ const mapStateToProps = state => ({
   currentHole: state.play.currentHole
 })
 
-const playWithGps = location(Play)
-
-export default connect(mapStateToProps)(playWithGps)
+export default connect(mapStateToProps)(Play)

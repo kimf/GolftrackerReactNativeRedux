@@ -25,12 +25,8 @@ const Loading = ({ text }) => (
 )
 
 
-Loading.propTypes = {
-  text: string
-}
+Loading.propTypes = { text: string }
 
-Loading.defaultProps = {
-  text: 'Startar upp...'
-}
+Loading.defaultProps = { text: 'Startar upp...' }
 
 export default Loading

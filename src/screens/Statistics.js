@@ -6,12 +6,12 @@ import Header from 'shared/Header'
 import styles, { colors } from '../styles'
 
 class Statistics extends Component {
-  static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = () => ({
     tabBarLabel: 'STATISTIK',
     tabBarIcon: ({ tintColor }) => (
       <Image
         source={require('../images/graph.png')}
-        style={[styles.icon, { tintColor: tintColor }]}
+        style={[styles.icon, { tintColor }]}
       />
     ),
     title: 'STATISTICS'

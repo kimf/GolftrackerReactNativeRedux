@@ -1,5 +1,3 @@
-import { sorted } from 'utils'
-
 const initialState = {
   loading: false,
   clubs: []

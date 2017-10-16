@@ -1,13 +1,20 @@
+import React from 'react'
 import { AppRegistry } from 'react-native'
+import { AppContainer } from 'react-hot-loader'
 import Root from './src/Root'
 
-// Sets up offline caching for all assets (disabled by default)
-// You can enable offline caching by changing
-// `enableOfflinePlugin` at the top of web/webpack.config.js
-if (__OFFLINE__) {
-  require('offline-plugin/runtime').install()
-}
+// const OfflinePluginRuntime = require('offline-plugin/runtime');
+// if (__OFFLINE__ === true) {
+//   OfflinePluginRuntime.install();
+// }
+
 
 AppRegistry.registerComponent('Golftracker', () => Root)
+
+if (module.hot) {
+  module.hot.accept()
+  const renderHotApp = () => (<AppContainer><Root /></AppContainer>)
+  AppRegistry.registerComponent('Golftracker', () => renderHotApp)
+}
 
 AppRegistry.runApplication('Golftracker', { rootTag: window.document.getElementById('react-root') })

@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, Platform } from 'react-native'
 import { arrayOf, func, shape } from 'prop-types'
 import { NavigationActions } from 'react-navigation'
 
 import ListItem from 'lists/ListItem'
+import WebList from 'lists/WebList'
 import { selectItem, deSelectItem } from 'actions/general'
 
 import styles from 'styles'
 
+const ListView = Platform.OS === 'web' ? WebList : FlatList
+
 export default class Listing extends Component {
   static propTypes = {
     dispatch: func.isRequired,
-    navigation: shape({
-      navigate: func.isRequired
-    }).isRequired,
+    navigation: shape({ navigate: func.isRequired }).isRequired,
     items: arrayOf(shape()).isRequired
   }
 
@@ -50,7 +51,7 @@ export default class Listing extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <FlatList
+          <ListView
             removeClippedSubviews={false}
             data={this.props.items}
             renderItem={({ item }) => (

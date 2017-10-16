@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, View, FlatList, Text } from 'react-native'
+import { Image, View, FlatList, Text, Platform } from 'react-native'
 import { arrayOf, func, bool } from 'prop-types'
 import { connect } from 'react-redux'
 import { fetchScorecardsIfNeeded } from 'actions/scorecards'
@@ -7,10 +7,13 @@ import { sortedByParsedDate } from 'utils'
 
 import Header from 'shared/Header'
 import Loading from 'shared/Loading'
+import WebList from 'lists/WebList'
 
 import ScorecardRow from 'scorecards/ScorecardRow'
 import { scorecardShape } from 'propTypes'
 import styles, { colors, NAVBAR_HEIGHT } from '../styles'
+
+const ListView = Platform.OS === 'web' ? WebList : FlatList
 
 class Scorecards extends Component {
   static propTypes = {
@@ -57,7 +60,7 @@ class Scorecards extends Component {
           title="SCOREKORT"
           backgroundColor={colors.white}
         />
-        <FlatList
+        <ListView
           removeClippedSubviews={false}
           style={{ backgroundColor: colors.white, marginTop: NAVBAR_HEIGHT, padding: 10 }}
           data={scorecards}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { LayoutAnimation } from 'react-native'
+import { LayoutAnimation, Platform } from 'react-native'
 import { number, func, shape } from 'prop-types'
 
 import { CLUBS, LIES, MISSES, GREEN_RESULTS, FAIRWAY_RESULTS } from 'constants'
@@ -20,7 +20,7 @@ export default class ShotInput extends Component {
   }
 
   componentWillReceiveProps() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+    if (Platform.OS !== 'web') LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
   }
 
   setData = (data) => {
@@ -106,7 +106,10 @@ export default class ShotInput extends Component {
 
     if (title && onPress) {
       return (
-        <GridView {...{ key, title, strong, items, onPress }} />
+        <GridView {...{
+          key, title, strong, items, onPress
+        }}
+        />
       )
     }
 

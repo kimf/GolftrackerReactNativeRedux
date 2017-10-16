@@ -1,6 +1,8 @@
 import { connect } from 'react-redux'
+
 import Listing from 'lists/Listing'
 import { getCourse } from 'selectors'
+import { sortedByName } from 'utils'
 import navOptions from './navigationOptions'
 
 class SlopePicker extends Listing {
@@ -14,8 +16,6 @@ class SlopePicker extends Listing {
   }
 }
 
-const mapStateToProps = state => ({
-  items: getCourse(state).slopes.sort((a, b) => a.name.localeCompare(b.name, 'sv-SE'))
-})
+const mapStateToProps = state => ({ items: sortedByName(getCourse(state).slopes) })
 
 export default connect(mapStateToProps)(SlopePicker)

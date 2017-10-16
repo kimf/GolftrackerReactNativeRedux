@@ -39,7 +39,7 @@ class Header extends Component {
         style={{ tintColor: colors.muted }}
         source={require('../../images/close.png')}
       />
-    </TouchableView >
+    </TouchableView>
   )
 
   render() {

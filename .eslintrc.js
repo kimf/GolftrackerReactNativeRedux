@@ -23,24 +23,17 @@ module.exports = {
     "react/jsx-no-undef": 2,
     "react/jsx-wrap-multilines": 2,
     "react/jsx-filename-extension": 0,
-    "comma-dangle": [
-      2,
-      "never"
-    ],
-    semi: [
-      2,
-      "never"
-    ],
+    "comma-dangle": [2, "never"],
+    semi: [2, "never"],
     "no-undef": 2,
     "no-unused-vars": 2,
     "global-require": 0,
     "object-curly-newline": [
-      "error", {
-        "ObjectPattern": { "multiline": true }
-      }
+      "error", { "multiline": true, "minProperties": 5 }
     ]
   },
   settings: {
+    "import/parser": "babel-eslint",
     "import/resolver": {
       "babel-module": {}
     }
