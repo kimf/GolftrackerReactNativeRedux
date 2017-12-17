@@ -9,10 +9,7 @@ class Statistics extends Component {
   static navigationOptions = () => ({
     tabBarLabel: 'STATISTIK',
     tabBarIcon: ({ tintColor }) => (
-      <Image
-        source={require('../images/graph.png')}
-        style={[styles.icon, { tintColor }]}
-      />
+      <Image source={require('../images/graph.png')} style={[styles.icon, { tintColor }]} />
     ),
     title: 'STATISTICS'
   })
@@ -20,10 +17,7 @@ class Statistics extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header
-          title="STATISTIK"
-          backgroundColor={colors.white}
-        />
+        <Header title="STATISTIK" backgroundColor={colors.white} />
         <Text>Hello, STATISTIK!</Text>
       </View>
     )

@@ -27,12 +27,8 @@ const styles = StyleSheet.create({
 
 const Measurements = ({ user, measurePoint, green }) => (
   <View style={styles.view}>
-    <TGText style={styles.label}>
-      X: {calcDistance(user, measurePoint)}m
-    </TGText>
-    <TGText style={styles.label}>
-      G: {calcDistance(measurePoint, green)}m
-    </TGText>
+    <TGText style={styles.label}>X: {calcDistance(user, measurePoint)}m</TGText>
+    <TGText style={styles.label}>G: {calcDistance(measurePoint, green)}m</TGText>
   </View>
 )
 

@@ -10,7 +10,7 @@ export default class Putt extends Component {
     setShotData: func.isRequired
   }
 
-  addResult = (result) => {
+  addResult = result => {
     let endLie = null
     let success = false
     const club = 'PUTTER'
@@ -30,15 +30,18 @@ export default class Putt extends Component {
   addDistance = () => this.props.setShotData({ putt: true, distance: 2 })
 
   renderResults = (result, index) => (
-    <button key={index} className="bigass" onClick={() => this.addResult(result)}>{result}</button>
+    <button key={index} className="bigass" onClick={() => this.addResult(result)}>
+      {result}
+    </button>
   )
 
   render() {
     const { putt } = this.props
 
-
     if (!putt.result) {
-      return <GridView title="WHERE DID YOU PUT IT?" items={PUTT_RESULTS} onPress={this.addResult} />
+      return (
+        <GridView title="WHERE DID YOU PUT IT?" items={PUTT_RESULTS} onPress={this.addResult} />
+      )
     }
 
     if (!putt.distance) {

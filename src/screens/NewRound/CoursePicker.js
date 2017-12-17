@@ -14,7 +14,6 @@ class CoursePicker extends Listing {
   }
 }
 
-
 const mapStateToProps = state => ({ items: sortedByName(getClub(state).courses) })
 
 export default connect(mapStateToProps)(CoursePicker)

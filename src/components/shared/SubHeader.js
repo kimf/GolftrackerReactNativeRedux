@@ -21,13 +21,11 @@ class SubHeader extends Component {
     const { title, backgroundColor, color } = this.props
 
     return (
-      <View
-        style={[styles.subHeader, { backgroundColor }]}
-      >
+      <View style={[styles.subHeader, { backgroundColor }]}>
         <TGText adjustsFontSizeToFitHeight style={[styles.subHeaderTitle, { color }]}>
           {title}
         </TGText>
-      </View >
+      </View>
     )
   }
 }

@@ -23,7 +23,9 @@ class HoleView extends Component {
   }
 
   async componentWillMount() {
-    MapboxGL.setAccessToken('pk.eyJ1Ijoia2ltZiIsImEiOiJjamJiNXJ5b2Ywc2t5MzN0YjhwMWsycTQxIn0.vWT6_dMSH15Lh6dlAbTfMg')
+    MapboxGL.setAccessToken(
+      'pk.eyJ1Ijoia2ltZiIsImEiOiJjamJiNXJ5b2Ywc2t5MzN0YjhwMWsycTQxIn0.vWT6_dMSH15Lh6dlAbTfMg'
+    )
   }
 
   setShotData = (shot, shotIndex) => {
@@ -57,8 +59,7 @@ class HoleView extends Component {
             width: deviceWidth - 20,
             backgroundColor: colors.white,
             borderRadius: 10
-          }}
-        >
+          }}>
           {isActive && <HoleMap {...{ teePos, holePos }} />}
         </View>
       </View>

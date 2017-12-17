@@ -15,11 +15,11 @@ class ShowMap extends React.Component {
     holePos: shape({ lat: number, lng: number }).isRequired
   }
 
-  setTeePos = (value) => {
+  setTeePos = value => {
     console.log(value)
   }
 
-  setHolePos = (value) => {
+  setHolePos = value => {
     console.log(value)
   }
 

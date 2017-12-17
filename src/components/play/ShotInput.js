@@ -23,17 +23,17 @@ export default class ShotInput extends Component {
     if (Platform.OS !== 'web') LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
   }
 
-  setData = (data) => {
+  setData = data => {
     const { index } = this.props
     this.props.onSetData(data, index)
   }
 
-  addClub = (club) => {
+  addClub = club => {
     const { position } = this.props
     this.setData({ club, position })
   }
 
-  addResult = (result) => {
+  addResult = result => {
     let goingFor = 'FAIRWAY'
     let success = false
     let endLie = null
@@ -54,15 +54,15 @@ export default class ShotInput extends Component {
     this.setData({ goingFor, success, endLie })
   }
 
-  addLie = (lie) => {
+  addLie = lie => {
     this.setData({ lie })
   }
 
-  addEndLie = (endLie) => {
+  addEndLie = endLie => {
     this.setData({ endLie })
   }
 
-  addMissPosition = (missPosition) => {
+  addMissPosition = missPosition => {
     this.setData({ missPosition })
   }
 
@@ -106,9 +106,14 @@ export default class ShotInput extends Component {
 
     if (title && onPress) {
       return (
-        <GridView {...{
-          key, title, strong, items, onPress
-        }}
+        <GridView
+          {...{
+            key,
+            title,
+            strong,
+            items,
+            onPress
+          }}
         />
       )
     }

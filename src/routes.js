@@ -50,7 +50,6 @@ const MainStack = StackNavigator(
     headerMode: 'none',
     initialRouteName: 'RouteDecider'
   }
-
 )
 
 export default MainStack

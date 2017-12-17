@@ -6,7 +6,9 @@ import Routes from 'routes'
 
 class Root extends Component {
   state = { hasLoaded: false }
-  store = configureStore(() => { this.setState({ hasLoaded: true }) })
+  store = configureStore(() => {
+    this.setState({ hasLoaded: true })
+  })
 
   render() {
     const { hasLoaded } = this.state
@@ -24,4 +26,3 @@ class Root extends Component {
 }
 
 export default Root
-

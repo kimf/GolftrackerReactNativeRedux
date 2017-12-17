@@ -23,7 +23,7 @@ export function selectScorecard(id) {
 }
 
 function fetchScorecards() {
-  return (dispatch) => {
+  return dispatch => {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
 
@@ -37,11 +37,11 @@ function fetchScorecards() {
     return fetch(`${API_URL}/scorecards.json`)
       .then(response => response.json())
       .then(json =>
-
         // We can dispatch many times!
         // Here, we update the app state with the results of the API call.
 
-        dispatch(receiveScorecards(json)))
+        dispatch(receiveScorecards(json))
+      )
 
     // In a real world app, you also want to
     // catch any error in the network call.
@@ -59,7 +59,6 @@ function shouldFetchScorecards(state) {
   }
   return true
 }
-
 
 export function fetchScorecardsIfNeeded() {
   // Note that the function also receives getState()

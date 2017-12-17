@@ -36,7 +36,7 @@ class Play extends Component {
     if (Platform.OS === 'web') {
       this.subscription = navigator.geolocation.watchPosition(
         this.updateLocation,
-        (err) => {
+        err => {
           // eslint-disable-next-line no-console
           console.warn(`ERROR(${err.code}): ${err.message}`)
         },
@@ -73,7 +73,7 @@ class Play extends Component {
 
   closeModal = () => this.setState(state => ({ ...state, modal: null }))
 
-  handlePageChange = (e) => {
+  handlePageChange = e => {
     const { currentHoleIndex } = this.props
     const offset = e.nativeEvent.contentOffset
     if (offset) {
@@ -84,7 +84,7 @@ class Play extends Component {
     }
   }
 
-  updateLocation = (position) => {
+  updateLocation = position => {
     // eslint-disable-next-line
     this.setState(state => ({ ...state, position }))
   }
@@ -116,11 +116,10 @@ class Play extends Component {
           height: '100%',
           alignItems: 'stretch',
           backgroundColor: colors.lightGray
-        }}
-      >
+        }}>
         <ScrollView
           style={{ width: '100%', height: '100%' }}
-          ref={(sv) => {
+          ref={sv => {
             this.scrollView = sv
           }}
           showsHorizontalScrollIndicator={false}
@@ -131,8 +130,7 @@ class Play extends Component {
           paging
           bounces
           pagingEnabled
-          removeClippedSubviews
-        >
+          removeClippedSubviews>
           {holes.map((h, index) => (
             <HoleView
               key={`hole_view_${h.id}`}
@@ -156,8 +154,7 @@ class Play extends Component {
             width: deviceWidth,
             height: deviceHeight,
             backgroundColor: 'red'
-          }}
-        >
+          }}>
           <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>
             MENY
           </TGText>
@@ -169,12 +166,10 @@ class Play extends Component {
             width: deviceWidth,
             height: deviceHeight,
             backgroundColor: 'red'
-          }}
-        >
+          }}>
           <TGText
             style={{ color: 'white', padding: 20 }}
-            onPress={() => this.closeModal('scorecard')}
-          >
+            onPress={() => this.closeModal('scorecard')}>
             SCOREKORT
           </TGText>
         </View>

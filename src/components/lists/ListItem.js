@@ -6,14 +6,8 @@ import TouchableView from 'shared/TouchableView'
 import styles from 'styles'
 
 const ListItem = ({ onPress, title }) => (
-  <TouchableView
-    key={`course_row_${title}`}
-    onPress={onPress}
-    style={[styles.listrow]}
-  >
-    <TGText style={{ flex: 1, fontWeight: 'bold' }}>
-      {title}
-    </TGText>
+  <TouchableView key={`course_row_${title}`} onPress={onPress} style={[styles.listrow]}>
+    <TGText style={{ flex: 1, fontWeight: 'bold' }}>{title}</TGText>
   </TouchableView>
 )
 

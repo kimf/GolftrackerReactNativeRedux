@@ -5,19 +5,16 @@ import thunk from 'redux-thunk'
 
 import rootReducer from 'reducers'
 
-const configureStore = (onComplete) => {
+const configureStore = onComplete => {
   // eslint-disable-next-line no-underscore-dangle
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
   const middleware = [thunk]
   const store = createStore(
     rootReducer,
-    composeEnhancers(
-      applyMiddleware(...middleware),
-      autoRehydrate()
-    )
+    composeEnhancers(applyMiddleware(...middleware), autoRehydrate())
   )
 
-  persistStore(store, { storage: AsyncStorage }, onComplete)// .purge()
+  persistStore(store, { storage: AsyncStorage }, onComplete) // .purge()
   return store
 }
 

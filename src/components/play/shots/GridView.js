@@ -17,8 +17,7 @@ const GridView = ({ title, strong, items, onPress }) => (
           viewStyle={styles.gridButton}
           style={styles.gridButtonText}
           key={item}
-          onPress={() => onPress(item)}
-        >
+          onPress={() => onPress(item)}>
           {item}
         </TGText>
       ))}

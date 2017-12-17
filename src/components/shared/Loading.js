@@ -24,7 +24,6 @@ const Loading = ({ text }) => (
   </View>
 )
 
-
 Loading.propTypes = { text: string }
 
 Loading.defaultProps = { text: 'Startar upp...' }

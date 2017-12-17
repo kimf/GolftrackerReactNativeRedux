@@ -15,23 +15,25 @@ function receiveHoles(json) {
 }
 
 function fetchHoles(slopeId) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestHoles())
 
     return fetch(`${API_URL}/slopes/${slopeId}.json`)
       .then(response => response.json())
-      .then(json =>
-        dispatch(receiveHoles(json)))
+      .then(json => dispatch(receiveHoles(json)))
   }
 }
 
 function shouldFetchHoles(state) {
   const holes = state.play.holes.length
-  if (state.play.loading) { return false }
-  if (holes > 0) { return false }
+  if (state.play.loading) {
+    return false
+  }
+  if (holes > 0) {
+    return false
+  }
   return true
 }
-
 
 export function fetchHolesIfNeeded(slopeId) {
   return (dispatch, getState) => {

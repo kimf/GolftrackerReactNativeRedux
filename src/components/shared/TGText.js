@@ -18,19 +18,24 @@ const styles = StyleSheet.create({
 })
 
 const TGText = ({ onPress, style, viewStyle, children, ...rest }) => {
-  const fontSize = style
-    ? (StyleSheet.flatten(style).fontSize || FONT_SIZE)
-    : FONT_SIZE
-  const scaledFontSize = Math.round((fontSize * realWidth) / 375)
+  const fontSize = style ? StyleSheet.flatten(style).fontSize || FONT_SIZE : FONT_SIZE
+  const scaledFontSize = Math.round(fontSize * realWidth / 375)
 
   const text = (
-    <Text key={`${rest.key}_inner`} style={[styles.text, style, { fontSize: scaledFontSize }]} {...rest}>
+    <Text
+      key={`${rest.key}_inner`}
+      style={[styles.text, style, { fontSize: scaledFontSize }]}
+      {...rest}>
       {children}
     </Text>
   )
-  return onPress
-    ? <TouchableView key={rest.key} style={[viewStyle]} onPress={onPress}>{text}</TouchableView>
-    : text
+  return onPress ? (
+    <TouchableView key={rest.key} style={[viewStyle]} onPress={onPress}>
+      {text}
+    </TouchableView>
+  ) : (
+    text
+  )
 }
 
 export default TGText

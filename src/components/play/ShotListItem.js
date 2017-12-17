@@ -1,14 +1,18 @@
 import React from 'react'
 import { View, Button } from 'react-native'
-import { /* number, */bool, func, shape } from 'prop-types'
+import { /* number, */ bool, func, shape } from 'prop-types'
 
 import TGText from 'shared/TGText'
 import styles from 'styles'
 
 const ShotListItem = ({ shot, onRemove, isRemovable }) => {
   const {
-    lie, club, distance,
-    proximityToHole, missPosition, endLie
+    lie,
+    club,
+    distance,
+    proximityToHole,
+    missPosition,
+    endLie
     // success, goingFor
   } = shot
 
@@ -20,7 +24,9 @@ const ShotListItem = ({ shot, onRemove, isRemovable }) => {
         {lie || ''} ({club})
         {distance || ''}
       </TGText>
-      <TGText>{proximityToHole || ''} {missPosition || ''} {endLie || ''}</TGText>
+      <TGText>
+        {proximityToHole || ''} {missPosition || ''} {endLie || ''}
+      </TGText>
       {isRemovable ? <Button onPress={onRemove} title="x" /> : null}
     </View>
   )

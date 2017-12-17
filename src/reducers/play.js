@@ -34,7 +34,7 @@ export default function play(state = initialState, action) {
 
     case 'RECEIVE_HOLES': {
       const holes = []
-      action.holes.forEach((hole) => {
+      action.holes.forEach(hole => {
         const withShot = {
           ...hole,
           shots: [makeShot(hole.id)]

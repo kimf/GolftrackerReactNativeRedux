@@ -25,11 +25,11 @@ export default class Listing extends Component {
     this.resetNavigationOnNextStep = false
   }
 
-  resetChoice = (itemType) => {
+  resetChoice = itemType => {
     this.props.dispatch(deSelectItem(itemType))
   }
 
-  selectItem = (item) => {
+  selectItem = item => {
     this.props.dispatch(selectItem(this.itemType, item.id))
     if (this.nextStep) {
       if (this.resetNavigationOnNextStep) {
@@ -45,7 +45,6 @@ export default class Listing extends Component {
       }
     }
   }
-
 
   render() {
     return (

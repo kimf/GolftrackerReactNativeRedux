@@ -19,16 +19,13 @@ const styles = StyleSheet.create({
   }
 })
 
-const BottomButton = ({
-  title, onPress, backgroundColor, color
-}) => (
+const BottomButton = ({ title, onPress, backgroundColor, color }) => (
   <TGText
-      viewStyle={[styles.button, { backgroundColor }]}
-      style={[styles.text, { color }]}
-      onPress={onPress}
-    >
-      {title}
-    </TGText>
+    viewStyle={[styles.button, { backgroundColor }]}
+    style={[styles.text, { color }]}
+    onPress={onPress}>
+    {title}
+  </TGText>
 )
 
 BottomButton.propTypes = {

@@ -8,21 +8,23 @@ function receiveClubs(json) {
   return { type: 'RECEIVE_CLUBS', clubs: json.clubs }
 }
 
-
 function fetchClubs() {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(requestClubs())
 
     return fetch(`${API_URL}/clubs.json`)
       .then(response => response.json())
-      .then(json =>
-        dispatch(receiveClubs(json)))
+      .then(json => dispatch(receiveClubs(json)))
   }
 }
 
 function shouldFetchClubs(state) {
-  if (state.clubs.loading) { return false }
-  if (state.clubs.clubs.length > 0) { return false }
+  if (state.clubs.loading) {
+    return false
+  }
+  if (state.clubs.clubs.length > 0) {
+    return false
+  }
   return true
 }
 

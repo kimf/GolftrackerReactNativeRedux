@@ -33,8 +33,7 @@ const ScoringFooter = ({ showMenu, showScorecard }) => (
     <TGText
       onPress={() => showScorecard()}
       viewStyle={styles.button}
-      style={[styles.text, styles.leaderboard]}
-    >
+      style={[styles.text, styles.leaderboard]}>
       SCORES
     </TGText>
   </View>

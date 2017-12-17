@@ -19,7 +19,7 @@ class RouteDecider extends Component {
     }
   }
 
-  navigateTo = (routeName) => {
+  navigateTo = routeName => {
     const resetAction = NavigationActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({ routeName })]

@@ -32,10 +32,7 @@ class Scorecards extends Component {
   static navigationOptions = {
     tabBarLabel: 'SCOREKORT',
     tabBarIcon: ({ tintColor }) => (
-      <Image
-        source={require('../images/list.png')}
-        style={[styles.icon, { tintColor }]}
-      />
+      <Image source={require('../images/list.png')} style={[styles.icon, { tintColor }]} />
     )
   }
 
@@ -56,17 +53,12 @@ class Scorecards extends Component {
 
     return (
       <View style={styles.container}>
-        <Header
-          title="SCOREKORT"
-          backgroundColor={colors.white}
-        />
+        <Header title="SCOREKORT" backgroundColor={colors.white} />
         <ListView
           removeClippedSubviews={false}
           style={{ backgroundColor: colors.white, marginTop: NAVBAR_HEIGHT, padding: 10 }}
           data={scorecards}
-          renderItem={({ item }) => (
-            <ScorecardRow scorecard={item} />
-          )}
+          renderItem={({ item }) => <ScorecardRow scorecard={item} />}
           keyExtractor={item => `event_${item.id}}`}
         />
       </View>
@@ -80,4 +72,3 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps)(Scorecards)
-
