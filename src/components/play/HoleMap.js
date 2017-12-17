@@ -1,5 +1,4 @@
 import React from 'react'
-import { View } from 'react-native'
 import MapboxGL from '@mapbox/react-native-mapbox-gl'
 import { arrayOf, number, shape } from 'prop-types'
 import { connect } from 'react-redux'

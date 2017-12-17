@@ -1,4 +1,4 @@
-import { API_URL } from 'constants'
+import { API_URL } from 'appConstants'
 
 function requestClubs() {
   return { type: 'REQUEST_CLUBS' }

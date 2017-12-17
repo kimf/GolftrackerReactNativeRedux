@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { shape, func } from 'prop-types'
 
-import { PUTT_RESULTS } from 'constants'
+import { PUTT_RESULTS } from 'appConstants'
 import GridView from 'play/shots/GridView'
 
 export default class Putt extends Component {

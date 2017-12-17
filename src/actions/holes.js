@@ -1,4 +1,4 @@
-import { API_URL } from 'constants'
+import { API_URL } from 'appConstants'
 
 export const REQUEST_HOLES = 'REQUEST_HOLES'
 function requestHoles() {

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { LayoutAnimation, Platform } from 'react-native'
 import { number, func, shape } from 'prop-types'
 
-import { CLUBS, MISS_LIES, LIES, MISSES, GREEN_RESULTS, FAIRWAY_RESULTS } from 'constants'
+import { CLUBS, MISS_LIES, LIES, MISSES, GREEN_RESULTS, FAIRWAY_RESULTS } from 'appConstants'
 import GridView from 'play/shots/GridView'
 import Putt from 'play/shots/Putt'
 import Loading from 'shared/Loading'
