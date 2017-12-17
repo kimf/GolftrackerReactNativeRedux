@@ -15,7 +15,7 @@ export const colors = {
   red: '#E30050'
 }
 
-export const NAVBAR_HEIGHT = 100
+export const NAVBAR_HEIGHT = 80
 export const STATUS_BAR_HEIGHT = 20
 export const deviceWidth = Dimensions.get('window').width
 export const deviceHeight = Dimensions.get('window').height
@@ -94,6 +94,13 @@ export default StyleSheet.create({
     color: colors.white,
     fontWeight: 'bold',
     textAlign: 'center'
-  }
+  },
 
+  blockingMessage: {
+    marginTop: NAVBAR_HEIGHT,
+    height: 40,
+    alignItems: 'center',
+    backgroundColor: colors.red,
+    color: colors.white
+  }
 })

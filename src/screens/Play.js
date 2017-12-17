@@ -8,8 +8,7 @@ import TGText from 'shared/TGText'
 import HoleView from 'play/HoleView'
 import ScoringFooter from 'play/ScoringFooter'
 
-// import { regionFrom } from 'utils'
-import { getClub, getCourse, getSlope } from 'selectors'
+import { getSlope } from 'selectors'
 import { fetchHolesIfNeeded } from 'actions/holes'
 import { changeHole } from 'actions/play'
 import { deviceWidth, deviceHeight, colors } from 'styles'
@@ -37,8 +36,8 @@ class Play extends Component {
     if (Platform.OS === 'web') {
       this.subscription = navigator.geolocation.watchPosition(
         this.updateLocation,
-        // eslint-disable-next-line no-console
         (err) => {
+          // eslint-disable-next-line no-console
           console.warn(`ERROR(${err.code}): ${err.message}`)
         },
         {
@@ -80,14 +79,13 @@ class Play extends Component {
     if (offset) {
       const page = Math.round(offset.x / deviceWidth) + 1
       if (currentHoleIndex !== page) {
-        this.props.dispatch(changeHole(page))
+        this.props.dispatch(changeHole(page - 1))
       }
     }
   }
 
   updateLocation = (position) => {
     // eslint-disable-next-line
-    console.log('position', position)
     this.setState(state => ({ ...state, position }))
   }
 
@@ -140,7 +138,7 @@ class Play extends Component {
               key={`hole_view_${h.id}`}
               position={position}
               tee={h}
-              isActive={h.number === currentHole.number}
+              isActive={h.hole.number === currentHole.hole.number}
               holesCount={holes.length}
               holeIndex={index}
             />
@@ -187,11 +185,9 @@ class Play extends Component {
 
 const mapStateToProps = state => ({
   loading: state.play.loading,
-  club: getClub(state),
-  course: getCourse(state),
   slope: getSlope(state),
   holes: state.play.holes,
-  currentHole: state.play.currentHole
+  currentHoleIndex: state.play.currentHoleIndex
 })
 
 export default connect(mapStateToProps)(Play)

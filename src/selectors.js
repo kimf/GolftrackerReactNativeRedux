@@ -1,5 +1,10 @@
 export const getClub = state => state.clubs.clubs.find(c => c.id === state.play.club)
 
+export const getClubPosition = (state) => {
+  const club = getClub(state)
+  return [parseFloat(club.lng), parseFloat(club.lat)]
+}
+
 export const getCourse = (state) => {
   const club = getClub(state)
   return club.courses.find(c => c.id === state.play.course)

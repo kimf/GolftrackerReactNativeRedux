@@ -7,7 +7,7 @@ import { colors } from 'styles'
 
 const styles = StyleSheet.create({
   view: {
-    height: 44,
+    height: 40,
     backgroundColor: colors.green,
     flexDirection: 'row',
     width: '100%',
