@@ -8,8 +8,6 @@ import TGText from 'shared/TGText'
 import HoleView from 'play/HoleView'
 import ScoringFooter from 'play/ScoringFooter'
 
-// import Gps from 'play/Gps'
-
 // import { regionFrom } from 'utils'
 import { getClub, getCourse, getSlope } from 'selectors'
 import { fetchHolesIfNeeded } from 'actions/holes'
@@ -18,9 +16,6 @@ import { deviceWidth, deviceHeight, colors } from 'styles'
 import { holeShape } from 'propTypes'
 
 const Location = NativeModules.RNLocation
-const ASPECT_RATIO = deviceWidth / (deviceHeight - 40)
-const LAT_DELTA = 0.0922
-const LNG_DELTA = 0.0922 * ASPECT_RATIO
 
 class Play extends Component {
   static propTypes = {
@@ -43,7 +38,9 @@ class Play extends Component {
       this.subscription = navigator.geolocation.watchPosition(
         this.updateLocation,
         // eslint-disable-next-line no-console
-        (err) => { console.warn(`ERROR(${err.code}): ${err.message}`) },
+        (err) => {
+          console.warn(`ERROR(${err.code}): ${err.message}`)
+        },
         {
           enableHighAccuracy: true,
           timeout: 5000,
@@ -88,23 +85,7 @@ class Play extends Component {
     }
   }
 
-  updateLocation = (loc) => {
-    /* Example location returned
-    {
-      speed: -1,
-      longitude: -0.1337,
-      latitude: 51.50998,
-      accuracy: 5,
-      heading: -1,
-      altitude: 0,
-      altitudeAccuracy: -1
-    }
-    */
-    const position = {
-      ...loc,
-      latitudeDelta: LAT_DELTA,
-      longitudeDelta: LNG_DELTA
-    }
+  updateLocation = (position) => {
     // eslint-disable-next-line
     console.log('position', position)
     this.setState(state => ({ ...state, position }))
@@ -116,7 +97,6 @@ class Play extends Component {
     const currentHole = holes[currentHoleIndex]
 
     const menuPosition = modal && modal === 'menu' ? 0 : -deviceHeight
-    // const gpsPosition = modal && modal === 'gps' ? 0 : -deviceHeight
     const scorecardPosition = modal && modal === 'scorecard' ? 0 : -deviceHeight
 
     if (loading) {
@@ -142,7 +122,9 @@ class Play extends Component {
       >
         <ScrollView
           style={{ width: '100%', height: '100%' }}
-          ref={(sv) => { this.scrollView = sv }}
+          ref={(sv) => {
+            this.scrollView = sv
+          }}
           showsHorizontalScrollIndicator={false}
           scrollEnabled
           onMomentumScrollEnd={this.handlePageChange}
@@ -169,33 +151,39 @@ class Play extends Component {
           showScorecard={() => this.showModal('scorecard')}
           showGps={() => this.showModal('gps')}
         />
-        <View style={{
-          top: menuPosition,
-          position: 'absolute',
-          width: deviceWidth,
-          height: deviceHeight,
-          backgroundColor: 'red'
-        }}
+        <View
+          style={{
+            top: menuPosition,
+            position: 'absolute',
+            width: deviceWidth,
+            height: deviceHeight,
+            backgroundColor: 'red'
+          }}
         >
-          <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>MENY</TGText>
+          <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>
+            MENY
+          </TGText>
         </View>
-        <View style={{
-          top: scorecardPosition, position: 'absolute', width: deviceWidth, height: deviceHeight, backgroundColor: 'red'
-        }}
+        <View
+          style={{
+            top: scorecardPosition,
+            position: 'absolute',
+            width: deviceWidth,
+            height: deviceHeight,
+            backgroundColor: 'red'
+          }}
         >
-          <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('scorecard')}>SCOREKORT</TGText>
+          <TGText
+            style={{ color: 'white', padding: 20 }}
+            onPress={() => this.closeModal('scorecard')}
+          >
+            SCOREKORT
+          </TGText>
         </View>
       </View>
     )
   }
 }
-
-// <Gps
-//   top={gpsPosition}
-//   close={() => this.closeModal('gps')}
-//   position={position}
-// />
-
 
 const mapStateToProps = state => ({
   loading: state.play.loading,

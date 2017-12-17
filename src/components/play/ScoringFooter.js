@@ -25,21 +25,10 @@ const styles = StyleSheet.create({
   leaderboard: { textAlign: 'right' }
 })
 
-const ScoringFooter = ({ showMenu, showScorecard, showGps }) => (
+const ScoringFooter = ({ showMenu, showScorecard }) => (
   <View style={styles.view}>
-    <TGText
-      onPress={() => showMenu()}
-      viewStyle={styles.button}
-      style={[styles.text, styles.menu]}
-    >
+    <TGText onPress={() => showMenu()} viewStyle={styles.button} style={[styles.text, styles.menu]}>
       MENY
-    </TGText>
-    <TGText
-      onPress={() => showGps()}
-      viewStyle={styles.button}
-      style={[styles.text, styles.menu]}
-    >
-      GPS
     </TGText>
     <TGText
       onPress={() => showScorecard()}
@@ -53,8 +42,7 @@ const ScoringFooter = ({ showMenu, showScorecard, showGps }) => (
 
 ScoringFooter.propTypes = {
   showMenu: func.isRequired,
-  showScorecard: func.isRequired,
-  showGps: func.isRequired
+  showScorecard: func.isRequired
 }
 
 export default ScoringFooter

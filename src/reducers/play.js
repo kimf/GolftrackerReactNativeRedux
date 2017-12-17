@@ -2,7 +2,7 @@ import dotProp from 'dot-prop-immutable'
 import { calcDistance } from 'utils'
 
 const makeShot = (holeIndex, lie = 'TEE') => {
-  const id = `${Math.floor((Math.random() * 100) + 1)}_${new Date().getTime()}_${holeIndex}`
+  const id = `${Math.floor(Math.random() * 100 + 1)}_${new Date().getTime()}_${holeIndex}`
   return { id, lie, finished: false }
 }
 
@@ -81,20 +81,31 @@ export default function play(state = initialState, action) {
       newShot.finished = finished
 
       // update shot data in shot-array
-      let newShotList = dotProp.set(state, `holes.${action.holeIndex}.shots.${action.shotIndex}`, newShot)
+      let newShotList = dotProp.set(
+        state,
+        `holes.${action.holeIndex}.shots.${action.shotIndex}`,
+        newShot
+      )
 
       // we have gotten club, then we can add this clubs startPos
       // as the previous shot's endPos, if there is a prevShot of course
       if (prevShot && shot.club) {
         const distance = calcDistance(prevShot.position, newShot.position)
         const newPrevShot = Object.assign({}, prevShot, { endPosition: newShot.position, distance })
-        newShotList = dotProp.set(newShotList, `holes.${action.holeIndex}.shots.${action.shotIndex - 1}`, newPrevShot)
+        newShotList = dotProp.set(
+          newShotList,
+          `holes.${action.holeIndex}.shots.${action.shotIndex - 1}`,
+          newPrevShot
+        )
       }
 
       if (newShot.finished && newShot.endLie !== 'IN THE HOLE') {
         // add a new shot with previous shot's endLie
         const addShot = makeShot(holeIndex, newShot.endLie)
-        newShotList = dotProp.set(newShotList, `holes.${action.holeIndex}.shots`, shots => [...shots, addShot])
+        newShotList = dotProp.set(newShotList, `holes.${action.holeIndex}.shots`, shots => [
+          ...shots,
+          addShot
+        ])
       }
 
       return newShotList

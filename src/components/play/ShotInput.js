@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { LayoutAnimation, Platform } from 'react-native'
 import { number, func, shape } from 'prop-types'
 
-import { CLUBS, LIES, MISSES, GREEN_RESULTS, FAIRWAY_RESULTS } from 'constants'
+import { CLUBS, MISS_LIES, LIES, MISSES, GREEN_RESULTS, FAIRWAY_RESULTS } from 'constants'
 import GridView from 'play/shots/GridView'
 import Putt from 'play/shots/Putt'
 import Loading from 'shared/Loading'
@@ -96,7 +96,7 @@ export default class ShotInput extends Component {
       key = 'endLie'
       title = 'WHERE DID YOU END UP?'
       onPress = this.addEndLie
-      items = LIES
+      items = MISS_LIES
     } else if (!shot.success && !shot.missPosition) {
       key = 'miss'
       title = 'WHERE DID YOU MISS IT?'

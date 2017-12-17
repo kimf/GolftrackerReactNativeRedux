@@ -53,6 +53,7 @@ class HoleView extends Component {
           backgroundColor: colors.white
         }}
         >
+          <TGText>{position.latitude} - {position.longitude}</TGText>
           {shots.map((shot, index) => {
             if (shot.finished) {
               const lastFinishedId = shots.filter(s => s.finished).slice(-1)[0].id
