@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, View, DeviceEventEmitter, NativeModules, Platform } from 'react-native'
+import { ScrollView, View /*, DeviceEventEmitter, NativeModules, Platform */ } from 'react-native'
 import { connect } from 'react-redux'
 import { arrayOf, bool, shape, func, number } from 'prop-types'
 
@@ -14,7 +14,7 @@ import { changeHole } from 'actions/play'
 import { deviceWidth, deviceHeight, colors } from 'styles'
 import { holeShape } from 'propTypes'
 
-const Location = NativeModules.RNLocation
+// const Location = NativeModules.RNLocation
 
 class Play extends Component {
   static propTypes = {
@@ -32,40 +32,40 @@ class Play extends Component {
 
   state = { modal: null, position: null }
 
-  componentWillMount() {
-    if (Platform.OS === 'web') {
-      this.subscription = navigator.geolocation.watchPosition(
-        this.updateLocation,
-        err => {
-          // eslint-disable-next-line no-console
-          console.warn(`ERROR(${err.code}): ${err.message}`)
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
-        }
-      )
-    } else {
-      Location.requestWhenInUseAuthorization()
-      Location.startUpdatingLocation()
-      this.subscription = DeviceEventEmitter.addListener('locationUpdated', this.updateLocation)
-    }
-  }
+  // componentWillMount() {
+  //   if (Platform.OS === 'web') {
+  //     this.subscription = navigator.geolocation.watchPosition(
+  //       this.updateLocation,
+  //       err => {
+  //         // eslint-disable-next-line no-console
+  //         console.warn(`ERROR(${err.code}): ${err.message}`)
+  //       },
+  //       {
+  //         enableHighAccuracy: true,
+  //         timeout: 5000,
+  //         maximumAge: 0
+  //       }
+  //     )
+  //   } else {
+  //     Location.requestWhenInUseAuthorization()
+  //     Location.startUpdatingLocation()
+  //     this.subscription = DeviceEventEmitter.addListener('locationUpdated', this.updateLocation)
+  //   }
+  // }
 
   componentDidMount() {
     const { slope } = this.props
     this.props.dispatch(fetchHolesIfNeeded(slope.id))
   }
 
-  componentWillUnmount() {
-    if (Platform.OS === 'web') {
-      navigator.geolocation.clearWatch(this.subscription)
-    } else {
-      Location.stopUpdatingLocation()
-      DeviceEventEmitter.removeListener('locationUpdated')
-    }
-  }
+  // componentWillUnmount() {
+  //   if (Platform.OS === 'web') {
+  //     navigator.geolocation.clearWatch(this.subscription)
+  //   } else {
+  //     Location.stopUpdatingLocation()
+  //     DeviceEventEmitter.removeListener('locationUpdated')
+  //   }
+  // }
 
   subscription = null
 
@@ -105,9 +105,9 @@ class Play extends Component {
       return null
     }
 
-    if (!position) {
-      return <Loading text="Laddar GPS..." />
-    }
+    // if (!position) {
+    //   return <Loading text="Laddar GPS..." />
+    // }
 
     return (
       <View

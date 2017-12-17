@@ -41,9 +41,6 @@ class HoleView extends Component {
     const { tee, isActive /* , holeIndex, position */ } = this.props
     const { hole, shots } = tee
 
-    const teePos = { lat: tee.lat, lng: tee.lng }
-    const holePos = { lat: hole.green_center_lat, lng: hole.green_center_lng }
-
     return (
       <View style={{ flex: 1, backgroundColor: colors.lightGray }}>
         <Header title={`${hole.number}`}>
@@ -60,7 +57,7 @@ class HoleView extends Component {
             backgroundColor: colors.white,
             borderRadius: 10
           }}>
-          {isActive && <HoleMap {...{ teePos, holePos }} />}
+          {isActive && <HoleMap {...{ tee }} />}
         </View>
       </View>
     )

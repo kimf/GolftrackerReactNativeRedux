@@ -1,3 +1,5 @@
+import { API_URL } from 'appConstants'
+
 export const endRound = () => ({ type: 'END_ROUND' })
 
 export const setShotData = (shot, holeIndex, shotIndex) => ({
@@ -10,3 +12,21 @@ export const setShotData = (shot, holeIndex, shotIndex) => ({
 export const removeShot = (holeIndex, shotIndex) => ({ type: 'REMOVE_SHOT', holeIndex, shotIndex })
 
 export const changeHole = index => ({ type: 'CHANGE_HOLE', index })
+
+export const setPos = (model, id, lat, lng) => {
+  const type = `UPDATE_${model.toUpperCase()}_POS`
+  return dispatch => {
+    dispatch({
+      type,
+      id,
+      lat,
+      lng,
+      updatedAt: Date.now()
+    })
+    return fetch(`${API_URL}/${model}s/${id}/position`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat, lng })
+    }).then(res => console.log(type, res))
+  }
+}

@@ -17,6 +17,22 @@ const initialState = {
 
 export default function play(state = initialState, action) {
   switch (action.type) {
+    case 'UPDATE_TEE_POS': {
+      const { id, lat, lng } = action
+      const holeIndex = state.holes.findIndex(h => h.id === id)
+      const hole = state.holes[holeIndex]
+      const newHole = { ...hole, lat, lng }
+      return dotProp.set(state, `holes.${holeIndex}`, newHole)
+    }
+
+    case 'UPDATE_HOLE_POS': {
+      const { id, lat, lng } = action
+      const holeIndex = state.holes.findIndex(h => h.hole.id === id)
+      const hole = state.holes[holeIndex].hole
+      const newHole = { ...hole, green_center_lat: lat, green_center_lng: lng }
+      return dotProp.set(state, `holes.${holeIndex}.hole`, newHole)
+    }
+
     case 'SELECT_ITEM': {
       const newState = {}
       newState[action.model] = action.id
