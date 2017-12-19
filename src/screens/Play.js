@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { FlatList, View /*, DeviceEventEmitter, NativeModules, Platform */ } from 'react-native'
+/*, DeviceEventEmitter, NativeModules, Platform */
+import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { arrayOf, bool, shape, func, number } from 'prop-types'
 import MapboxGL from '@mapbox/react-native-mapbox-gl'
