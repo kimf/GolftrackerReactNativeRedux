@@ -3,17 +3,19 @@ import { FlatList, View /*, DeviceEventEmitter, NativeModules, Platform */ } fro
 import { connect } from 'react-redux'
 import { arrayOf, bool, shape, func, number } from 'prop-types'
 import MapboxGL from '@mapbox/react-native-mapbox-gl'
+import { NavigationActions } from 'react-navigation'
 
 import Loading from 'shared/Loading'
 import TGText from 'shared/TGText'
 import Header from 'shared/Header'
 import ScoringFooter from 'play/ScoringFooter'
 import HoleMap from 'play/HoleMap'
+import BottomButton from 'shared/BottomButton'
 
 import { getSlope, getCourse } from 'selectors'
 import { fetchHolesIfNeeded } from 'actions/holes'
-import { removeShot, setShotData, changeHole, setPos } from 'actions/play'
-import { NAVBAR_HEIGHT, deviceWidth, deviceHeight } from 'styles'
+import { removeShot, setShotData, changeHole, setPos, endRound } from 'actions/play'
+import { NAVBAR_HEIGHT, FOOTER_HEIGHT, deviceWidth, deviceHeight } from 'styles'
 import { holeShape } from 'propTypes'
 
 // const Location = NativeModules.RNLocation
@@ -94,8 +96,9 @@ class Play extends Component {
   closeModal = () => this.setState(state => ({ ...state, modal: null }))
 
   changeHole = index => {
+    console.log(index)
     this.props.dispatch(changeHole(index))
-    this.scrollView.scrollToIndex({ animated: true, index })
+    // this.scrollView.scrollToIndex({ animated: true, index })
   }
 
   updateLocation = position => {
@@ -105,6 +108,15 @@ class Play extends Component {
 
   clearGps = holeId => {
     this.props.dispatch(setPos(holeId, [], []))
+  }
+
+  cancelPlay = async () => {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Main' })]
+    })
+    await this.props.navigation.dispatch(resetAction)
+    this.props.dispatch(endRound())
   }
 
   render() {
@@ -129,55 +141,30 @@ class Play extends Component {
 
     return (
       <View style={{ flex: 1, alignContent: 'space-around' }}>
-        <FlatList
-          key="holePicker"
-          style={{
-            width: '100%',
-            height: NAVBAR_HEIGHT,
-            flex: 1
-          }}
-          ref={sv => {
-            this.scrollView = sv
-          }}
-          data={holes}
-          renderItem={({ item, index }) => (
-            <View style={{ width: deviceWidth }}>
-              <Header title={`${item.number}`}>
-                {index > 0 && (
-                  <TGText
-                    onPress={() => this.changeHole(index - 1)}
-                    style={{ padding: 10, backgroundColor: 'red' }}>
-                    {`< ${item.number - 1}`}
-                  </TGText>
-                )}
-                <TGText>Par: {item.par} - </TGText>
-                <TGText>Hcp: {item.index}</TGText>
-                <TGText
-                  onPress={() => this.changeHole(index + 1)}
-                  style={{ padding: 10, backgroundColor: 'red' }}>
-                  {`${item.number + 1} >`}
-                </TGText>
-                <TGText
-                  onPress={() => this.clearGps(item.id)}
-                  style={{ padding: 10, backgroundColor: 'black' }}>
-                  RENSA GPS
-                </TGText>
-              </Header>
-            </View>
+        <Header title={`${currentHole.number}`}>
+          {currentHole.number > 1 && (
+            <TGText
+              onPress={() => this.changeHole(currentHoleIndex - 1)}
+              style={{ padding: 10, backgroundColor: 'red' }}>
+              {`< ${currentHole.number - 1}`}
+            </TGText>
           )}
-          keyExtractor={item => item.id}
-          initialScrollIndex={currentHoleIndex}
-          getItemLayout={(data, index) => ({
-            length: deviceWidth,
-            offset: deviceWidth * index,
-            index
-          })}
-          horizontal
-          pagingEnabled
-          scrollEnabled={false}
-          showsHorizontalScrollIndicator={false}
-        />
-        <View style={{ height: deviceHeight - NAVBAR_HEIGHT - 40 }}>
+          <TGText>Par: {currentHole.par} - </TGText>
+          <TGText>Hcp: {currentHole.currentHoleIndex}</TGText>
+          {currentHole.number <= holes.length && (
+            <TGText
+              onPress={() => this.changeHole(currentHoleIndex + 1)}
+              style={{ padding: 10, backgroundColor: 'red' }}>
+              {`${currentHole.number + 1} >`}
+            </TGText>
+          )}
+          <TGText
+            onPress={() => this.clearGps(currentHole.id)}
+            style={{ padding: 10, backgroundColor: 'black' }}>
+            RENSA GPS
+          </TGText>
+        </Header>
+        <View style={{ height: deviceHeight - NAVBAR_HEIGHT - FOOTER_HEIGHT }}>
           <HoleMap hole={currentHole} />
         </View>
         <ScoringFooter
@@ -194,8 +181,10 @@ class Play extends Component {
             backgroundColor: 'red'
           }}>
           <TGText style={{ color: 'white', padding: 20 }} onPress={() => this.closeModal('menu')}>
-            MENY
+            STÄNG
           </TGText>
+
+          <BottomButton title="AVBRYT RUNDA" onPress={this.cancelPlay} />
         </View>
         <View
           style={{

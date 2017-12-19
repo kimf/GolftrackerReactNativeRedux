@@ -1,33 +1,17 @@
 import React from 'react'
 import MapboxGL from '@mapbox/react-native-mapbox-gl'
-import geoViewport from '@mapbox/geo-viewport'
 import { arrayOf, number, shape, func } from 'prop-types'
 import { connect } from 'react-redux'
 
 import { getClubPosition } from 'selectors'
 import { setPos } from 'actions/play'
-import styles, { deviceWidth, deviceHeight } from 'styles'
+import styles from 'styles'
 import TGText from '../shared/TGText'
-import { getRhumbLineBearing } from 'utils'
 
 const progressListener = (offlineRegion, status) => console.log(offlineRegion, status)
 const errorListener = (offlineRegion, err) => console.log(offlineRegion, err)
 
-const hasPositions = hole => hole.teePos.length === 2 && hole.holePos.length === 2
-
-const getBounds = hole => {
-  const bounds = geoViewport.viewport(
-    [hole.teePos[0], hole.teePos[1], hole.holePos[0], hole.holePos[1]],
-    [deviceWidth, deviceHeight - 60]
-  )
-  const bearing = getRhumbLineBearing(
-    hole.teePos[0],
-    hole.teePos[1],
-    hole.holePos[0],
-    hole.holePos[1]
-  )
-  return { ...bounds, bearing }
-}
+const hasPositions = hole => hole.teePos && hole.holePos
 
 class HoleMap extends React.Component {
   map = null
@@ -48,8 +32,8 @@ class HoleMap extends React.Component {
   }
 
   onLongPress = (attr, coords) => {
+    const hole = { ...this.props.hole }
     if (attr === 'teePos' || attr === 'holePos') {
-      const hole = { ...this.props.hole }
       hole[attr] = coords
       this.props.dispatch(setPos(hole.id, hole.teePos, hole.holePos))
     }
@@ -73,22 +57,25 @@ class HoleMap extends React.Component {
   }
 
   updateMap = nextHole => {
-    let bounds = null
     const hasPos = hasPositions(nextHole)
     if (hasPos) {
-      bounds = getBounds(nextHole)
-      this.map.setCamera({ heading: bounds.bearing, duration: 150 })
-      this.map.fitBounds(nextHole.teePos, nextHole.holePos, 40, 500)
+      this.map.setCamera({
+        centerCoordinate: nextHole.center,
+        zoom: nextHole.zoom || 15,
+        heading: nextHole.bearing,
+        direction: nextHole.bearing,
+        duration: 150
+      })
       // this.getOfflinePack(nextHole.id, bounds)
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { id, teePos, holePos } = this.props.hole
+    const { id, center } = this.props.hole
     const nextHole = nextProps.hole
 
-    const oldProps = JSON.stringify([...teePos, ...holePos])
-    const newProps = JSON.stringify([...nextHole.teePos, ...nextHole.holePos])
+    const oldProps = JSON.stringify(center)
+    const newProps = JSON.stringify(nextHole.center)
 
     if (id !== nextHole.id || oldProps !== newProps) {
       this.updateMap(nextHole)
@@ -108,17 +95,14 @@ class HoleMap extends React.Component {
     let message = null
     let posKey = null
 
-    const hasTeePos = teePos.length === 2
-    const hasHolePos = holePos.length === 2
-
-    if (!hasTeePos) {
+    if (!teePos) {
       posKey = 'teePos'
       message = (
         <TGText key="message" style={styles.blockingMessage}>
           TEE SAKNAR GPS.. KÖR EN LONG PRESS!
         </TGText>
       )
-    } else if (!hasHolePos) {
+    } else if (!holePos) {
       posKey = 'holePos'
       message = (
         <TGText key="message" style={styles.blockingMessage}>
@@ -148,10 +132,8 @@ class HoleMap extends React.Component {
         scrollEnabled
         onLongPress={value => this.onLongPress(posKey, value.geometry.coordinates)}
         animated>
-        {hasTeePos && (
-          <MapboxGL.PointAnnotation id={`hole_${id}`} title="Tee" coordinate={teePos} />
-        )}
-        {hasHolePos && (
+        {teePos && <MapboxGL.PointAnnotation id={`hole_${id}`} title="Tee" coordinate={teePos} />}
+        {holePos && (
           <MapboxGL.PointAnnotation id={`hole_${id}`} title="Hole" coordinate={holePos} />
         )}
       </MapboxGL.MapView>

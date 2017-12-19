@@ -1,7 +1,15 @@
 // import { AsyncStorage } from 'react-native'
+import geoViewport from '@mapbox/geo-viewport'
 import geolib from 'geolib'
+import bearing from '@turf/bearing'
 
-export const calcDistance = (x, y) => geolib.getDistance(x, y, 1)
+import { NAVBAR_HEIGHT, FOOTER_HEIGHT, deviceWidth, deviceHeight } from 'styles'
+
+const BOUNDS_DRAW = NAVBAR_HEIGHT - FOOTER_HEIGHT
+
+export const isNumber = num => {
+  return !isNaN(num) && num !== null && !Array.isArray(num)
+}
 
 export const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 // avg.toLocaleString('sv', {maximumFractionDigits: 1, useGrouping:false})
@@ -116,26 +124,42 @@ export const cacheable = fn => {
 
 export const capitalize = string => string[0].toUpperCase() + string.slice(1)
 
-const deg2rad = angle => angle * 0.017453292519943295 // (angle / 180) * Math.PI
-const rad2deg = angle => angle * 57.29577951308232 // angle / Math.PI * 180
+// ------------------------------------------------------------------------------------
+// MAP HELPERS
+// ------------------------------------------------------------------------------------
+export const point = coordinates => {
+  if (!coordinates) throw new Error('coordinates is required')
+  if (!Array.isArray(coordinates)) throw new Error('coordinates must be an Array')
+  if (coordinates.length < 2) throw new Error('coordinates must be at least 2 numbers long')
+  if (!isNumber(coordinates[0]) || !isNumber(coordinates[1]))
+    throw new Error('coordinates must contain numbers')
 
-export const getRhumbLineBearing = (lat1, lon1, lat2, lon2) => {
-  // difference in longitudinal coordinates
-  let dLon = deg2rad(lon2) - deg2rad(lon1)
-
-  // difference in the phi of latitudinal coordinates
-  const dPhi = Math.log(
-    Math.tan(deg2rad(lat2) / 2 + Math.PI / 4) / Math.tan(deg2rad(lat1) / 2 + Math.PI / 4)
-  )
-
-  // we need to recalculate dLon if it is greater than pi
-  if (Math.abs(dLon) > Math.PI) {
-    if (dLon > 0) {
-      dLon = (2 * Math.PI - dLon) * -1
-    } else {
-      dLon = 2 * Math.PI + dLon
-    }
+  return {
+    type: 'Point',
+    coordinates
   }
-  // return the angle, normalized
-  return (rad2deg(Math.atan2(dLon, dPhi)) + 360) % 360
+}
+
+export const calcDistance = (x, y) => geolib.getDistance(x, y, 1)
+
+export const setMapData = (tee, hole) => {
+  const teePos = tee && tee.length === 2 ? tee : null
+  const holePos = hole && hole.length === 2 ? hole : null
+  const hasPos = !!(teePos && holePos)
+
+  const positions = { teePos, holePos }
+
+  if (hasPos) {
+    const viewPort = geoViewport.viewport(
+      [...teePos, ...holePos],
+      [deviceWidth - BOUNDS_DRAW, deviceHeight - BOUNDS_DRAW]
+    )
+    return {
+      ...positions,
+      ...viewPort,
+      bearing: bearing(point(teePos), point(holePos), { final: true })
+    }
+  } else {
+    return positions
+  }
 }

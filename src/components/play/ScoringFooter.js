@@ -3,12 +3,12 @@ import { View, StyleSheet } from 'react-native'
 import { func } from 'prop-types'
 
 import TGText from 'shared/TGText'
-import { colors } from 'styles'
+import { colors, FOOTER_HEIGHT } from 'styles'
 
 const styles = StyleSheet.create({
   view: {
-    height: 40,
-    backgroundColor: colors.dark,
+    height: FOOTER_HEIGHT,
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center'

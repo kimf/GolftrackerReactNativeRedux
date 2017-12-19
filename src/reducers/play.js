@@ -1,5 +1,5 @@
 import dotProp from 'dot-prop-immutable'
-import { calcDistance } from 'utils'
+import { calcDistance, setMapData } from 'utils'
 
 const makeShot = (holeIndex, lie = 'TEE') => {
   const id = `${Math.floor(Math.random() * 100 + 1)}_${new Date().getTime()}_${holeIndex}`
@@ -21,7 +21,7 @@ export default function play(state = initialState, action) {
       const { id, teePos, holePos } = action
       const holeIndex = state.holes.findIndex(h => h.id === id)
       const hole = state.holes[holeIndex]
-      const newHole = { ...hole, teePos, holePos }
+      const newHole = { ...hole, ...setMapData(teePos, holePos) }
       return dotProp.set(state, `holes.${holeIndex}`, newHole)
     }
 
@@ -43,10 +43,14 @@ export default function play(state = initialState, action) {
     case 'RECEIVE_HOLES': {
       const holes = []
       action.holes.forEach(hole => {
+        const location = setMapData(hole.tee_pos, hole.hole_pos)
+
+        delete hole.tee_pos
+        delete hole.hole_pos
+
         const withShot = {
           ...hole,
-          teePos: hole.tee_pos,
-          holePos: hole.hole_pos,
+          ...location,
           shots: [makeShot(hole.id)]
         }
         holes.push(withShot)

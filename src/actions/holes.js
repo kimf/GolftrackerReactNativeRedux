@@ -25,14 +25,15 @@ function fetchHoles(courseId) {
 }
 
 function shouldFetchHoles(state) {
-  const holes = state.play.holes.length
-  if (state.play.loading) {
-    return false
-  }
-  if (holes > 0) {
-    return false
-  }
   return true
+  // const holes = state.play.holes.length
+  // if (state.play.loading) {
+  //   return false
+  // }
+  // if (holes > 0) {
+  //   return false
+  // }
+  // return true
 }
 
 export function fetchHolesIfNeeded(courseId) {

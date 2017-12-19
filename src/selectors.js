@@ -7,10 +7,10 @@ export const getClubPosition = state => {
 
 export const getCourse = state => {
   const club = getClub(state)
-  return club.courses.find(c => c.id === state.play.course)
+  return club ? club.courses.find(c => c.id === state.play.course) : null
 }
 
 export const getSlope = state => {
   const course = getCourse(state)
-  return course.slopes.find(s => s.id === state.play.slope)
+  return course ? course.slopes.find(s => s.id === state.play.slope) : null
 }
