@@ -8,7 +8,7 @@ import { colors } from 'styles'
 const styles = StyleSheet.create({
   view: {
     height: 40,
-    backgroundColor: colors.green,
+    backgroundColor: colors.dark,
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center'

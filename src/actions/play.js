@@ -13,20 +13,19 @@ export const removeShot = (holeIndex, shotIndex) => ({ type: 'REMOVE_SHOT', hole
 
 export const changeHole = index => ({ type: 'CHANGE_HOLE', index })
 
-export const setPos = (model, id, lat, lng) => {
-  const type = `UPDATE_${model.toUpperCase()}_POS`
+export const setPos = (id, teePos, holePos) => {
   return dispatch => {
     dispatch({
-      type,
+      type: 'UPDATE_HOLE_POS',
       id,
-      lat,
-      lng,
+      teePos,
+      holePos,
       updatedAt: Date.now()
     })
-    return fetch(`${API_URL}/${model}s/${id}/position`, {
+    return fetch(`${API_URL}/holes/${id}/position`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lat, lng })
-    }).then(res => console.log(type, res))
+      body: JSON.stringify({ teePos, holePos })
+    }).then(res => console.log('UPDATE_HOLE_POS', res))
   }
 }

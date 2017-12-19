@@ -115,3 +115,27 @@ export const cacheable = fn => {
 }
 
 export const capitalize = string => string[0].toUpperCase() + string.slice(1)
+
+const deg2rad = angle => angle * 0.017453292519943295 // (angle / 180) * Math.PI
+const rad2deg = angle => angle * 57.29577951308232 // angle / Math.PI * 180
+
+export const getRhumbLineBearing = (lat1, lon1, lat2, lon2) => {
+  // difference in longitudinal coordinates
+  let dLon = deg2rad(lon2) - deg2rad(lon1)
+
+  // difference in the phi of latitudinal coordinates
+  const dPhi = Math.log(
+    Math.tan(deg2rad(lat2) / 2 + Math.PI / 4) / Math.tan(deg2rad(lat1) / 2 + Math.PI / 4)
+  )
+
+  // we need to recalculate dLon if it is greater than pi
+  if (Math.abs(dLon) > Math.PI) {
+    if (dLon > 0) {
+      dLon = (2 * Math.PI - dLon) * -1
+    } else {
+      dLon = 2 * Math.PI + dLon
+    }
+  }
+  // return the angle, normalized
+  return (rad2deg(Math.atan2(dLon, dPhi)) + 360) % 360
+}

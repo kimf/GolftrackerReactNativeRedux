@@ -12,15 +12,10 @@ export const shotShape = shape()
 
 export const holeShape = shape({
   id: number.isRequired,
-  length: number.isRequired,
-  lat: number,
-  lng: number,
-  hole: shape({
-    number: number.isRequired,
-    par: number.isRequired,
-    index: number.isRequired,
-    green_center_lat: number,
-    green_center_lng: number
-  }),
+  number: number.isRequired,
+  par: number.isRequired,
+  index: number.isRequired,
+  hole_pos: arrayOf(number),
+  tee_pos: arrayOf(number),
   shots: arrayOf(shotShape.isRequired).isRequired
 })

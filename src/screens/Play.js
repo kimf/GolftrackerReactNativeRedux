@@ -1,17 +1,19 @@
 import React, { Component } from 'react'
-import { ScrollView, View /*, DeviceEventEmitter, NativeModules, Platform */ } from 'react-native'
+import { FlatList, View /*, DeviceEventEmitter, NativeModules, Platform */ } from 'react-native'
 import { connect } from 'react-redux'
 import { arrayOf, bool, shape, func, number } from 'prop-types'
+import MapboxGL from '@mapbox/react-native-mapbox-gl'
 
 import Loading from 'shared/Loading'
 import TGText from 'shared/TGText'
-import HoleView from 'play/HoleView'
+import Header from 'shared/Header'
 import ScoringFooter from 'play/ScoringFooter'
+import HoleMap from 'play/HoleMap'
 
-import { getSlope } from 'selectors'
+import { getSlope, getCourse } from 'selectors'
 import { fetchHolesIfNeeded } from 'actions/holes'
-import { changeHole } from 'actions/play'
-import { deviceWidth, deviceHeight, colors } from 'styles'
+import { removeShot, setShotData, changeHole, setPos } from 'actions/play'
+import { NAVBAR_HEIGHT, deviceWidth, deviceHeight } from 'styles'
 import { holeShape } from 'propTypes'
 
 // const Location = NativeModules.RNLocation
@@ -21,6 +23,9 @@ class Play extends Component {
     loading: bool.isRequired,
     dispatch: func.isRequired,
     slope: shape().isRequired,
+    course: shape({
+      id: number.isRequired
+    }).isRequired,
     holes: arrayOf(holeShape),
     currentHoleIndex: number
   }
@@ -31,6 +36,21 @@ class Play extends Component {
   }
 
   state = { modal: null, position: null }
+
+  async componentWillMount() {
+    MapboxGL.setAccessToken(
+      'pk.eyJ1Ijoia2ltZiIsImEiOiJjamJiNXJ5b2Ywc2t5MzN0YjhwMWsycTQxIn0.vWT6_dMSH15Lh6dlAbTfMg'
+    )
+  }
+
+  setShotData = (shot, shotIndex) => {
+    const { holeIndex } = this.props
+    this.props.dispatch(setShotData(shot, holeIndex, shotIndex))
+  }
+
+  removeShot = (holeIndex, shotIndex) => {
+    this.props.dispatch(removeShot(holeIndex, shotIndex))
+  }
 
   // componentWillMount() {
   //   if (Platform.OS === 'web') {
@@ -53,9 +73,9 @@ class Play extends Component {
   //   }
   // }
 
-  componentDidMount() {
-    const { slope } = this.props
-    this.props.dispatch(fetchHolesIfNeeded(slope.id))
+  async componentDidMount() {
+    const { course } = this.props
+    this.props.dispatch(fetchHolesIfNeeded(course.id))
   }
 
   // componentWillUnmount() {
@@ -73,15 +93,9 @@ class Play extends Component {
 
   closeModal = () => this.setState(state => ({ ...state, modal: null }))
 
-  handlePageChange = e => {
-    const { currentHoleIndex } = this.props
-    const offset = e.nativeEvent.contentOffset
-    if (offset) {
-      const page = Math.round(offset.x / deviceWidth) + 1
-      if (currentHoleIndex !== page) {
-        this.props.dispatch(changeHole(page - 1))
-      }
-    }
+  changeHole = index => {
+    this.props.dispatch(changeHole(index))
+    this.scrollView.scrollToIndex({ animated: true, index })
   }
 
   updateLocation = position => {
@@ -89,9 +103,13 @@ class Play extends Component {
     this.setState(state => ({ ...state, position }))
   }
 
+  clearGps = holeId => {
+    this.props.dispatch(setPos(holeId, [], []))
+  }
+
   render() {
     const { loading, holes, currentHoleIndex } = this.props
-    const { modal, position } = this.state
+    const { modal } = this.state
     const currentHole = holes[currentHoleIndex]
 
     const menuPosition = modal && modal === 'menu' ? 0 : -deviceHeight
@@ -110,38 +128,58 @@ class Play extends Component {
     // }
 
     return (
-      <View
-        style={{
-          flex: 1,
-          height: '100%',
-          alignItems: 'stretch',
-          backgroundColor: colors.lightGray
-        }}>
-        <ScrollView
-          style={{ width: '100%', height: '100%' }}
+      <View style={{ flex: 1, alignContent: 'space-around' }}>
+        <FlatList
+          key="holePicker"
+          style={{
+            width: '100%',
+            height: NAVBAR_HEIGHT,
+            flex: 1
+          }}
           ref={sv => {
             this.scrollView = sv
           }}
-          showsHorizontalScrollIndicator={false}
-          scrollEnabled
-          onMomentumScrollEnd={this.handlePageChange}
-          scrollEventThrottle={1}
+          data={holes}
+          renderItem={({ item, index }) => (
+            <View style={{ width: deviceWidth }}>
+              <Header title={`${item.number}`}>
+                {index > 0 && (
+                  <TGText
+                    onPress={() => this.changeHole(index - 1)}
+                    style={{ padding: 10, backgroundColor: 'red' }}>
+                    {`< ${item.number - 1}`}
+                  </TGText>
+                )}
+                <TGText>Par: {item.par} - </TGText>
+                <TGText>Hcp: {item.index}</TGText>
+                <TGText
+                  onPress={() => this.changeHole(index + 1)}
+                  style={{ padding: 10, backgroundColor: 'red' }}>
+                  {`${item.number + 1} >`}
+                </TGText>
+                <TGText
+                  onPress={() => this.clearGps(item.id)}
+                  style={{ padding: 10, backgroundColor: 'black' }}>
+                  RENSA GPS
+                </TGText>
+              </Header>
+            </View>
+          )}
+          keyExtractor={item => item.id}
+          initialScrollIndex={currentHoleIndex}
+          getItemLayout={(data, index) => ({
+            length: deviceWidth,
+            offset: deviceWidth * index,
+            index
+          })}
           horizontal
-          paging
-          bounces
           pagingEnabled
-          removeClippedSubviews>
-          {holes.map((h, index) => (
-            <HoleView
-              key={`hole_view_${h.id}`}
-              position={position}
-              tee={h}
-              isActive={h.hole.number === currentHole.hole.number}
-              holesCount={holes.length}
-              holeIndex={index}
-            />
-          ))}
-        </ScrollView>
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+        />
+        <View style={{ height: deviceHeight - NAVBAR_HEIGHT - 40 }}>
+          <HoleMap hole={currentHole} />
+        </View>
         <ScoringFooter
           showMenu={() => this.showModal('menu')}
           showScorecard={() => this.showModal('scorecard')}
@@ -181,6 +219,7 @@ class Play extends Component {
 const mapStateToProps = state => ({
   loading: state.play.loading,
   slope: getSlope(state),
+  course: getCourse(state),
   holes: state.play.holes,
   currentHoleIndex: state.play.currentHoleIndex
 })

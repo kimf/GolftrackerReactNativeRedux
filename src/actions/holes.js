@@ -6,19 +6,19 @@ function requestHoles() {
 }
 
 export const RECEIVE_HOLES = 'RECEIVE_HOLES'
-function receiveHoles(json) {
+function receiveHoles(holes) {
   return {
     type: RECEIVE_HOLES,
-    holes: json.tees,
-    receivedAt: Date.now()
+    receivedAt: Date.now(),
+    holes
   }
 }
 
-function fetchHoles(slopeId) {
+function fetchHoles(courseId) {
   return dispatch => {
     dispatch(requestHoles())
 
-    return fetch(`${API_URL}/slopes/${slopeId}.json`)
+    return fetch(`${API_URL}/courses/${courseId}/holes.json`)
       .then(response => response.json())
       .then(json => dispatch(receiveHoles(json)))
   }
@@ -35,10 +35,10 @@ function shouldFetchHoles(state) {
   return true
 }
 
-export function fetchHolesIfNeeded(slopeId) {
+export function fetchHolesIfNeeded(courseId) {
   return (dispatch, getState) => {
     if (shouldFetchHoles(getState())) {
-      return dispatch(fetchHoles(slopeId))
+      return dispatch(fetchHoles(courseId))
     }
     return Promise.resolve()
   }

@@ -17,20 +17,12 @@ const initialState = {
 
 export default function play(state = initialState, action) {
   switch (action.type) {
-    case 'UPDATE_TEE_POS': {
-      const { id, lat, lng } = action
+    case 'UPDATE_HOLE_POS': {
+      const { id, teePos, holePos } = action
       const holeIndex = state.holes.findIndex(h => h.id === id)
       const hole = state.holes[holeIndex]
-      const newHole = { ...hole, lat, lng }
+      const newHole = { ...hole, teePos, holePos }
       return dotProp.set(state, `holes.${holeIndex}`, newHole)
-    }
-
-    case 'UPDATE_HOLE_POS': {
-      const { id, lat, lng } = action
-      const holeIndex = state.holes.findIndex(h => h.hole.id === id)
-      const hole = state.holes[holeIndex].hole
-      const newHole = { ...hole, green_center_lat: lat, green_center_lng: lng }
-      return dotProp.set(state, `holes.${holeIndex}.hole`, newHole)
     }
 
     case 'SELECT_ITEM': {
@@ -53,6 +45,8 @@ export default function play(state = initialState, action) {
       action.holes.forEach(hole => {
         const withShot = {
           ...hole,
+          teePos: hole.tee_pos,
+          holePos: hole.hole_pos,
           shots: [makeShot(hole.id)]
         }
         holes.push(withShot)

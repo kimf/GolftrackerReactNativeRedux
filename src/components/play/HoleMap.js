@@ -8,80 +8,123 @@ import { getClubPosition } from 'selectors'
 import { setPos } from 'actions/play'
 import styles, { deviceWidth, deviceHeight } from 'styles'
 import TGText from '../shared/TGText'
+import { getRhumbLineBearing } from 'utils'
 
-class ShowMap extends React.Component {
+const progressListener = (offlineRegion, status) => console.log(offlineRegion, status)
+const errorListener = (offlineRegion, err) => console.log(offlineRegion, err)
+
+const hasPositions = hole => hole.teePos.length === 2 && hole.holePos.length === 2
+
+const getBounds = hole => {
+  const bounds = geoViewport.viewport(
+    [hole.teePos[0], hole.teePos[1], hole.holePos[0], hole.holePos[1]],
+    [deviceWidth, deviceHeight - 60]
+  )
+  const bearing = getRhumbLineBearing(
+    hole.teePos[0],
+    hole.teePos[1],
+    hole.holePos[0],
+    hole.holePos[1]
+  )
+  return { ...bounds, bearing }
+}
+
+class HoleMap extends React.Component {
   map = null
+
+  state = {
+    center: null,
+    hasPositions: null
+  }
 
   static propTypes = {
     defaultCenter: arrayOf(number.isRequired).isRequired,
-    tee: shape({
+    hole: shape({
       id: number.isRequired,
-      lat: number,
-      lng: number,
-      hole: shape({
-        id: number.isRequired,
-        green_center_lat: number,
-        green_center_lng: number
-      }).isRequired
+      teePos: arrayOf(number),
+      holePos: arrayOf(number)
     }).isRequired,
     dispatch: func.isRequired
   }
 
-  setPos = (model, coords) => {
-    const { tee } = this.props
-    const id = model === 'tee' ? tee.id : tee.hole.id
-    this.props.dispatch(setPos(model, id, coords[0], coords[1]))
-
-    if (model === 'hole') {
-      this.map.fitBounds([tee.lat, tee.lng], [coords[0], coords[1]])
-    } else {
-      this.map.moveTo([coords[0], coords[1]])
+  onLongPress = (attr, coords) => {
+    if (attr === 'teePos' || attr === 'holePos') {
+      const hole = { ...this.props.hole }
+      hole[attr] = coords
+      this.props.dispatch(setPos(hole.id, hole.teePos, hole.holePos))
     }
   }
 
-  // componentDidMount() {
-  //   const { lat, lng, hole: { green_center_lat, green_center_lng } } = this.props.tee
-  //   if (lat && lng && green_center_lat && green_center_lng && this.map) {
-  //     console.log(lat, lng)
-  //     console.log(green_center_lat, green_center_lng)
-  //     this.map.fitBounds([lat, lng], [green_center_lat, green_center_lng], 20)
-  //   }
-  // }
+  getOfflinePack = async (holeId, bounds) => {
+    const offlinePack = await MapboxGL.offlineManager.getPack(`hole_${holeId}`)
+    if (!offlinePack) {
+      MapboxGL.offlineManager.createPack(
+        {
+          name: `hole_${holeId}`,
+          styleURL: MapboxGL.StyleURL.Satellite,
+          minZoom: 14,
+          maxZoom: 20,
+          bounds
+        },
+        progressListener,
+        errorListener
+      )
+    }
+  }
+
+  updateMap = nextHole => {
+    let bounds = null
+    const hasPos = hasPositions(nextHole)
+    if (hasPos) {
+      bounds = getBounds(nextHole)
+      this.map.setCamera({ heading: bounds.bearing, duration: 150 })
+      this.map.fitBounds(nextHole.teePos, nextHole.holePos, 40, 500)
+      // this.getOfflinePack(nextHole.id, bounds)
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { id, teePos, holePos } = this.props.hole
+    const nextHole = nextProps.hole
+
+    const oldProps = JSON.stringify([...teePos, ...holePos])
+    const newProps = JSON.stringify([...nextHole.teePos, ...nextHole.holePos])
+
+    if (id !== nextHole.id || oldProps !== newProps) {
+      this.updateMap(nextHole)
+    }
+  }
+
+  componentDidMount() {
+    this.updateMap(this.props.hole)
+  }
+
+  componentWillUnmount() {
+    MapboxGL.offlineManager.unsubscribe(`hole_${this.props.hole.id}`)
+  }
 
   render() {
-    const { defaultCenter, tee } = this.props
-    const { hole } = tee
-
-    let center = defaultCenter
-    let zoom = 18
-    // const heading = calculateHeading()
-
-    const teePos = { lat: tee.lat, lng: tee.lng }
-    const holePos = { lat: hole.green_center_lat, lng: hole.green_center_lng }
-
+    const { hole: { id, teePos, holePos }, defaultCenter } = this.props
     let message = null
-    let model = null
-    if (!teePos.lat || !teePos.lng) {
-      model = 'tee'
+    let posKey = null
+
+    const hasTeePos = teePos.length === 2
+    const hasHolePos = holePos.length === 2
+
+    if (!hasTeePos) {
+      posKey = 'teePos'
       message = (
         <TGText key="message" style={styles.blockingMessage}>
           TEE SAKNAR GPS.. KÖR EN LONG PRESS!
         </TGText>
       )
-    } else if (!holePos.lat || !holePos.lng) {
-      model = 'hole'
+    } else if (!hasHolePos) {
+      posKey = 'holePos'
       message = (
         <TGText key="message" style={styles.blockingMessage}>
           HÅLET SAKNAR GPS.. KÖR EN LONG PRESS!
         </TGText>
       )
-    } else {
-      const bounds = geoViewport.viewport(
-        [teePos.lat, teePos.lng, holePos.lat, holePos.lng],
-        [deviceWidth, deviceHeight]
-      )
-      center = bounds.center
-      zoom = bounds.zoom
     }
 
     return [
@@ -92,21 +135,30 @@ class ShowMap extends React.Component {
           this.map = map
         }}
         showUserLocation
-        centerCoordinate={center}
-        zoom={zoom}
+        centerCoordinate={defaultCenter}
         userTrackingMode={MapboxGL.UserTrackingModes.None}
-        styleURL={MapboxGL.StyleURL.Outdoors}
+        styleURL={MapboxGL.StyleURL.Satellite}
         style={{ flex: 1 }}
         pitchEnabled={false}
-        rotateEnabled={false}
+        zoomEnabled={false}
         attributionEnabled={false}
         logoEnabled={false}
-        onLongPress={value => this.setPos(model, value.geometry.coordinates)}
-      />
+        compassEnabled={false}
+        zoomLevel={16}
+        scrollEnabled
+        onLongPress={value => this.onLongPress(posKey, value.geometry.coordinates)}
+        animated>
+        {hasTeePos && (
+          <MapboxGL.PointAnnotation id={`hole_${id}`} title="Tee" coordinate={teePos} />
+        )}
+        {hasHolePos && (
+          <MapboxGL.PointAnnotation id={`hole_${id}`} title="Hole" coordinate={holePos} />
+        )}
+      </MapboxGL.MapView>
     ]
   }
 }
 
 const mapStateToProps = state => ({ defaultCenter: getClubPosition(state) })
 
-export default connect(mapStateToProps)(ShowMap)
+export default connect(mapStateToProps)(HoleMap)
